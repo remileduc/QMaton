@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from automaton import automaton, automaton_runner, mpl_visualizer, neighborhood
+from automaton import automaton, automaton_runner, cl_visualizer, neighborhood
 
 
 class GameOfLife:
@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     ca.random_initialize()
     ar = automaton_runner.AutomatonRunner(10, 100)
-    av = mpl_visualizer.MPLVisualizer(ca)
+    av = cl_visualizer.CLVisualizer()
 
     ar.launch(ca, av.draw)
     av.draw(ca)

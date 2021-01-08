@@ -1,5 +1,5 @@
 """
-mpl_visualizer
+Visualizer based on Matplotlib
 """
 
 from matplotlib import pyplot as plt
