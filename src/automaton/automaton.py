@@ -42,7 +42,4 @@ class Automaton:
             for j in range(self.width):
                 for rule in self.rules:
                     new_grid[i][j] = rule(new_grid, i, j)
-                    # if rule matched, skip the others
-                    if self.grid[i][j] != new_grid[i][j]:
-                        break
         self.grid = new_grid
