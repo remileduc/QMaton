@@ -16,4 +16,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from .game_of_life import *
+"""QMaton main module.
+
+This module contains all the logic for running a cellular automaton:
+
+- Automaton class is the grid
+- AutomatonRunner class allow to run the automaton multiple times
+- neighborhood is a module with utils functions for neighborhood computation
+"""
+
+
+from .automaton import *
+from .automaton_runner import *
+
+
+__all__ = ["automaton", "automaton_runner"]

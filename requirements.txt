@@ -1,0 +1,2 @@
+matplotlib
+pyqt>=5.9

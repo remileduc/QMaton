@@ -16,4 +16,5 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from .game_of_life import *
+from .file_visualizer import *
+from .mpl_visualizer import *

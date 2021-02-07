@@ -17,24 +17,45 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""Main entry for QMaton.
-
-Launch the automaton. You can change the automaton and the visulaizer used below.
-"""
+"""Print the steps in the console, or save it in a file."""
 
 
-from automaton import GameOfLife
-from qmaton import Automaton, AutomatonRunner
-from visualizer import FileVisualizer
+import os
+import sys
+
+
+class FileVisualizer:
+    """Print the steps in the console, or save it in a file.
+
+    Attributes
+        file the file where to write results. If not set, print on console.
+    """
+
+    def __init__(self, file = ''):
+        self.file = file
+        if file and os.path.exists(file):
+            os.remove(file)
+
+
+    def draw(self, automaton):
+        """Callback for the AutomatonRunner."""
+        if not self.file:
+            print(automaton)
+            return
+        with open(self.file, 'a') as f:
+            f.write(str(automaton) + '\n')
 
 
 if __name__ == "__main__":
+    from automaton import GameOfLife
+    from qmaton import Automaton, AutomatonRunner
+
     ca = GameOfLife.get_automaton(10, 10)
 
     ca.random_initialize()
     ar = AutomatonRunner(10, 100)
-    #av = FileVisualizer("test.txt")
-    av = FileVisualizer()
+    av = FileVisualizer("test.txt")
+    #av = FileVisualizer()
 
     ar.launch(ca, av.draw)
     av.draw(ca)
