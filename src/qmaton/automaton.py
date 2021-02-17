@@ -48,7 +48,7 @@ class Automaton:
     A State is simply a name associated to a color.
     """
 
-    def __init__(self, width=10, length=10):
+    def __init__(self, width=10, length=10, default_value=None):
         """Constructor
 
         :param int width: the width of the grid
@@ -58,7 +58,7 @@ class Automaton:
         self.__length = length
         self.states = []
         self.rules = []
-        self.grid = [[None for _ in range(width)] for _ in range(length)]
+        self.grid = [[default_value for _ in range(width)] for _ in range(length)]
 
     def __str__(self):
         """Return a string representing the grid.
@@ -83,10 +83,7 @@ class Automaton:
 
     def random_initialize(self):
         """Initialize each cell of the grid with a random State from the list of states."""
-        if not self.states:
-            self.grid = [[None for _ in range(self.width)]
-                         for _ in range(self.length)]
-        else:
+        if self.states:
             random.seed()
             self.grid = [[self.states[random.randrange(len(self.states))]
                           for _ in range(self.width)] for _ in range(self.length)]

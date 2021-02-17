@@ -56,7 +56,7 @@ class GameOfLife:
         :param int length: the length of the grid of the automaton
         :return Automaton: an automaton with states and rules
         """
-        ca = Automaton(width, length)
+        ca = Automaton(width, length, GameOfLife.DEATH)
         ca.rules = [GameOfLife.rule_death_cell, GameOfLife.rule_life_cell]
         ca.states = [GameOfLife.LIFE, GameOfLife.DEATH]
         return ca
