@@ -34,30 +34,38 @@ class GameOfLife:
 
 class GameOfFire:
     FEU = Automaton.State('Feu ', '#F93913')
-    FEU1 = Automaton.State('Feu1 ', '#F93913')
-    FEU2 = Automaton.State('Feu2 ', '#F93913')
-    FEU3 = Automaton.State('Feu3 ', '#F93913')  ## expé avec temps baton seul
+    FEU1 = Automaton.State('Feu1 ', '#d42806')
+    FEU2 = Automaton.State('Feu2 ', '#ad2003')
+    FEU3 = Automaton.State('Feu3 ', '#781400')  ## expé avec temps baton seul
     CENDRE = Automaton.State('Cendre', '#676463')
     VIDE = Automaton.State('Vide', '#FFF')
     ARBRE = Automaton.State('Arbre', '#15A655')
 
-    @staticmethod
-    @neighborhood.rule_margin(1)
-    def rule_cendre_cell(grid, x, y):
-        if grid[x][y] == GameOfFire.FEU3:
-         # Si à la date t on avait une cellule FEU3 alors elle devient à la date t+1 une cellule CENDRE
-            return GameOfFire.CENDRE
-        return grid[x][y]
 
     @staticmethod
     @neighborhood.rule_margin(1)
+    def rule(grid, x, y):
+        if grid[x][y] == GameOfFire.VIDE:
+            return GameOfFire.rule_vide_cell(grid, x, y)
+        elif grid[x][y] == GameOfFire.ARBRE:
+            return GameOfFire.rule_feu_cell(grid, x, y)
+        elif grid[x][y] == GameOfFire.FEU:
+            return GameOfFire.rule_feu1_cell(grid, x, y)
+        elif grid[x][y] == GameOfFire.FEU1:
+            return GameOfFire.rule_feu2_cell(grid, x, y)
+        elif grid[x][y] == GameOfFire.FEU2:
+            return GameOfFire.rule_feu3_cell(grid, x, y)
+        elif grid[x][y] == GameOfFire.FEU3:
+            return GameOfFire.rule_cendre_cell(grid, x, y)
+        return grid[x][y]
+
+    @staticmethod
     def rule_vide_cell(grid, x, y):
         if grid[x][y] == GameOfFire.VIDE:
             return GameOfFire.VIDE
         return grid[x][y]
 
     @staticmethod
-    @neighborhood.rule_margin(1)
     def rule_feu_cell(grid, x, y):
         # Si à la date t on avait une cellule ARBRE alors elle devient à la date t+1 une cellule FEU si une de ses cellule voisine est une cellule FEU
         if grid[x][y] == GameOfFire.ARBRE and neighborhood.count_neighbors(grid, x, y, GameOfFire.FEU) >= 1:
@@ -65,7 +73,6 @@ class GameOfFire:
         return grid[x][y]
 
     @staticmethod
-    @neighborhood.rule_margin(1)
     def rule_feu1_cell(grid, x, y):
         # Si à la date t on avait une cellule FEU alors elle devient à la date t+1 une cellule FEU1 si une de ses cellule voisine est une cellule FEU
         if grid[x][y] == GameOfFire.FEU :
@@ -73,7 +80,6 @@ class GameOfFire:
         return grid[x][y]
 
     @staticmethod
-    @neighborhood.rule_margin(1)
     def rule_feu2_cell(grid, x, y):
         # Si à la date t on avait une cellule FEU1 alors elle devient à la date t+1 une cellule FEU2 si une de ses cellule voisine est une cellule FEU
         if grid[x][y] == GameOfFire.FEU1 :
@@ -81,11 +87,17 @@ class GameOfFire:
         return grid[x][y]
 
     @staticmethod
-    @neighborhood.rule_margin(1)
     def rule_feu3_cell(grid, x, y):
         # Si à la date t on avait une cellule FEU2 alors elle devient à la date t+1 une cellule FEU3 si une de ses cellule voisine est une cellule FEU
         if grid[x][y] == GameOfFire.FEU2 :
             return GameOfFire.FEU3
+        return grid[x][y]
+
+    @staticmethod
+    def rule_cendre_cell(grid, x, y):
+        if grid[x][y] == GameOfFire.FEU3:
+         # Si à la date t on avait une cellule FEU3 alors elle devient à la date t+1 une cellule CENDRE
+            return GameOfFire.CENDRE
         return grid[x][y]
 
 
@@ -98,8 +110,8 @@ class GameOfFire:
         :return Automaton: an automaton with states and rules
         """
         ca = Automaton(width, length, GameOfFire.VIDE)
-        ca.rules = [GameOfFire.rule_cendre_cell, GameOfFire.rule_vide_cell, GameOfFire.rule_feu_cell]
         ca.states = [GameOfFire.FEU, GameOfFire.CENDRE, GameOfFire.VIDE, GameOfFire.ARBRE]
+        ca.rule = GameOfFire.rule
         return ca
 
 

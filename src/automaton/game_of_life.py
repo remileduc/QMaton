@@ -33,16 +33,26 @@ class GameOfLife:
     DEATH = Automaton.State('Death', '#FFF')
     """Death state, white"""
 
-    @staticmethod
-    @neighborhood.rule_margin(1)
-    def rule_death_cell(grid, x, y):
-        if grid[x][y] == GameOfLife.DEATH and neighborhood.count_neighbors(grid, x, y, GameOfLife.LIFE) == 3:
-            return GameOfLife.LIFE
-        return GameOfLife.DEATH
 
     @staticmethod
     @neighborhood.rule_margin(1)
+    def rule(grid, x, y):
+        if grid[x][y] == GameOfLife.DEATH:
+            return GameOfLife.rule_death_cell(grid, x, y)
+        elif grid[x][y] == GameOfLife.LIFE:
+            return GameOfLife.rule_life_cell(grid, x, y)
+        return grid[x][y]
+
+    @staticmethod
+    def rule_death_cell(grid, x, y):
+        if grid[x][y] == GameOfLife.DEATH and neighborhood.count_neighbors(grid, x, y, GameOfLife.LIFE) == 3:
+            return GameOfLife.LIFE
+        return grid[x][y]
+
+    @staticmethod
     def rule_life_cell(grid, x, y):
+        if grid[x][y] != GameOfLife.LIFE:
+            return grid[x][y]
         alive = neighborhood.count_neighbors(grid, x, y, GameOfLife.LIFE)
         if alive == 2 or alive == 3:
             return GameOfLife.LIFE
@@ -57,6 +67,23 @@ class GameOfLife:
         :return Automaton: an automaton with states and rules
         """
         ca = Automaton(width, length, GameOfLife.DEATH)
-        ca.rules = [GameOfLife.rule_death_cell, GameOfLife.rule_life_cell]
         ca.states = [GameOfLife.LIFE, GameOfLife.DEATH]
+        ca.rule = GameOfLife.rule
         return ca
+
+
+if __name__ == "__main__":
+    from PyQt5.QtWidgets import QApplication
+    from visualizer import QtVisualizer
+
+    app = QApplication([])
+
+    ca = GameOfLife.get_automaton(30, 30)
+
+    # Initialize
+    ca.random_initialize()
+
+    av = QtVisualizer(ca)
+
+    av.show()
+    app.exec_()

@@ -26,7 +26,7 @@ class AutomatonRunner:
     """AutomatonRunner
 
     Run iterations on the Automaton as many times as desired. It call the
-    method `Automaton.apply_rules()`.
+    method `Automaton.apply_rule()`.
 
     Attributes:
         sleep_time the number of ms between each iteration
@@ -63,7 +63,7 @@ class AutomatonRunner:
         while not self.__stop and i < self.nb_iter:
             time_before = time()
 
-            automaton.apply_rules()
+            automaton.apply_rule()
             if callback:
                 callback(automaton)
 

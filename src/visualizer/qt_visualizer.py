@@ -104,10 +104,11 @@ if __name__ == "__main__":
 
     # Initialize
     #ca.random_initialize()
-    ca.grid[2][2] = GameOfLife.LIFE
     ca.grid[2][3] = GameOfLife.LIFE
-    ca.grid[3][2] = GameOfLife.LIFE
-    ca.grid[3][3] = GameOfLife.LIFE
+    ca.grid[3][4] = GameOfLife.LIFE
+    ca.grid[4][2] = GameOfLife.LIFE
+    ca.grid[4][3] = GameOfLife.LIFE
+    ca.grid[4][4] = GameOfLife.LIFE
 
     av = QtVisualizer(ca)
 
