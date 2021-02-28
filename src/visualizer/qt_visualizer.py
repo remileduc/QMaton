@@ -59,7 +59,7 @@ class QtVisualizer(QWidget):
                 self.__layout.addWidget(QLabel(self), line, cell)
 
         self._button = QPushButton("Start", self)
-        self._button.clicked.connect(lambda: self.run(AutomatonRunner(10, 100)))
+        self._button.clicked.connect(lambda: self.run(AutomatonRunner(10, 1)))
         self.__layout.addWidget(self._button, line + 1, 0, -1, -1)
         self.draw()
 

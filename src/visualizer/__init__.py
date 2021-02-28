@@ -18,3 +18,4 @@
 
 from .file_visualizer import *
 from .mpl_visualizer import *
+from .qt_visualizer import *
