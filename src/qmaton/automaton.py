@@ -28,16 +28,16 @@ class Automaton:
     """"Grid of cells for the cellular automaton.
 
     An Automaton is defined by a grid of cells, a list of State that can take
-    each cell, and a list of rules that makes the cells change their state at
+    each cell, and one rule that makes the cells change their state at
     each iteration.
 
-    An iteration is calculated thanks to the method `apply_rules()`.
+    An iteration is calculated thanks to the method `apply_rule()`.
 
     Attributes:
         width the width of the grid
         length the length of the grid
         states the list of State that can possibly take each cell of the grid
-        rules the list of rules used to calculate an iteration
+        rule the rule used to calculate an iteration
         grid the grid of cells
     """
 
@@ -56,9 +56,10 @@ class Automaton:
         """
         self.__width = width
         self.__length = length
+        self.__default_value = default_value
         self.states = []
-        self.rules = []
-        self.grid = [[default_value for _ in range(width)] for _ in range(length)]
+        self.rule = None
+        self.grid = self.__init_grid()
 
     def __str__(self):
         """Return a string representing the grid.
@@ -88,16 +89,18 @@ class Automaton:
             self.grid = [[self.states[random.randrange(len(self.states))]
                           for _ in range(self.width)] for _ in range(self.length)]
 
-    def apply_rules(self):
+    def apply_rule(self):
         """Calculate an iteration of the cellular automaton.
 
-        Each rule defined in the list of rules is applied sequencially to each cell.
-        This means that the last rule will always prevail.
+        The setup rule is applied sequencially to each cell.
         """
-        new_grid = deepcopy(self.grid)
+        new_grid = self.__init_grid()
         # apply rules for each cell
         for i in range(self.length):
             for j in range(self.width):
-                for rule in self.rules:
-                    new_grid[i][j] = rule(new_grid, i, j)
+                new_grid[i][j] = self.rule(self.grid, i, j)
         self.grid = new_grid
+
+
+    def __init_grid(self):
+        return [[self.__default_value for _ in range(self.width)] for _ in range(self.length)]
