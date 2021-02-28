@@ -47,7 +47,7 @@ class GameOfLife:
     def rule_death_cell(grid, x, y):
         if grid[x][y] == GameOfLife.DEATH and neighborhood.count_neighbors(grid, x, y, GameOfLife.LIFE) == 3:
             return GameOfLife.LIFE
-        return return grid[x][y]
+        return grid[x][y]
 
     @staticmethod
     def rule_life_cell(grid, x, y):
