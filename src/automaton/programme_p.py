@@ -1,4 +1,4 @@
-from qmaton import Automaton, neighborhood
+from qmaton import Automaton, State, VonNeumannNeighborhood
 
 """ ( MODELE :
 
@@ -32,87 +32,85 @@ class GameOfLife:
     - sinon elle reste une cellule ARBRE à la date t+1
 """
 
-class GameOfFire:
-    FEU = Automaton.State('Feu ', '#F93913')
-    FEU1 = Automaton.State('Feu1 ', '#d42806')
-    FEU2 = Automaton.State('Feu2 ', '#ad2003')
-    FEU3 = Automaton.State('Feu3 ', '#781400')  ## expé avec temps baton seul
-    CENDRE = Automaton.State('Cendre', '#676463')
-    VIDE = Automaton.State('Vide', '#FFF')
-    ARBRE = Automaton.State('Arbre', '#15A655')
+class GameOfFire(Automaton):
+    FEU = State('Feu ', '#F93913')
+    FEU1 = State('Feu1 ', '#d42806')
+    FEU2 = State('Feu2 ', '#ad2003')
+    FEU3 = State('Feu3 ', '#781400')  ## expé avec temps baton seul
+    CENDRE = State('Cendre', '#676463')
+    VIDE = State('Vide', '#FFF')
+    ARBRE = State('Arbre', '#15A655')
 
+    FIRE_LIST = (
+        FEU,
+        FEU1,
+        FEU2,
+        FEU3
+    )
 
-    @staticmethod
-    @neighborhood.rule_margin(1)
-    def rule(grid, x, y):
-        if grid[x][y] == GameOfFire.VIDE:
-            return GameOfFire.rule_vide_cell(grid, x, y)
-        elif grid[x][y] == GameOfFire.ARBRE:
-            return GameOfFire.rule_feu_cell(grid, x, y)
-        elif grid[x][y] == GameOfFire.FEU:
-            return GameOfFire.rule_feu1_cell(grid, x, y)
-        elif grid[x][y] == GameOfFire.FEU1:
-            return GameOfFire.rule_feu2_cell(grid, x, y)
-        elif grid[x][y] == GameOfFire.FEU2:
-            return GameOfFire.rule_feu3_cell(grid, x, y)
-        elif grid[x][y] == GameOfFire.FEU3:
-            return GameOfFire.rule_cendre_cell(grid, x, y)
-        return grid[x][y]
+    def __init__(self, width, length):
+        super().__init__(width, length, GameOfFire.VIDE)
+        self.states = [
+            GameOfFire.FEU,
+            GameOfFire.FEU1,
+            GameOfFire.FEU2,
+            GameOfFire.FEU3,
+            GameOfFire.CENDRE,
+            GameOfFire.VIDE,
+            GameOfFire.ARBRE
+        ]
+        self.rule = self.main_rule
+        self.neighborhood = VonNeumannNeighborhood()
 
-    @staticmethod
-    def rule_vide_cell(grid, x, y):
-        if grid[x][y] == GameOfFire.VIDE:
+    def main_rule(self, x, y):
+        if self.grid[x][y] == GameOfFire.VIDE:
+            return self.rule_vide_cell(x, y)
+        elif self.grid[x][y] == GameOfFire.ARBRE:
+            return self.rule_feu_cell(x, y)
+        elif self.grid[x][y] == GameOfFire.FEU:
+            return self.rule_feu1_cell(x, y)
+        elif self.grid[x][y] == GameOfFire.FEU1:
+            return self.rule_feu2_cell(x, y)
+        elif self.grid[x][y] == GameOfFire.FEU2:
+            return self.rule_feu3_cell(x, y)
+        elif self.grid[x][y] == GameOfFire.FEU3:
+            return self.rule_cendre_cell(x, y)
+        return self.grid[x][y]
+
+    def rule_vide_cell(self, x, y):
+        if self.grid[x][y] == GameOfFire.VIDE:
             return GameOfFire.VIDE
-        return grid[x][y]
+        return self.grid[x][y]
 
-    @staticmethod
-    def rule_feu_cell(grid, x, y):
+    def rule_feu_cell(self, x, y):
         # Si à la date t on avait une cellule ARBRE alors elle devient à la date t+1 une cellule FEU si une de ses cellule voisine est une cellule FEU
-        if grid[x][y] == GameOfFire.ARBRE and neighborhood.count_neighbors(grid, x, y, GameOfFire.FEU) >= 1:
+        if self.grid[x][y] == GameOfFire.ARBRE and self.count_neighbors(self.neighborhood, x, y, (GameOfFire.FIRE_LIST)) >= 1:
             return GameOfFire.FEU
-        return grid[x][y]
+        return self.grid[x][y]
 
-    @staticmethod
-    def rule_feu1_cell(grid, x, y):
+    def rule_feu1_cell(self, x, y):
         # Si à la date t on avait une cellule FEU alors elle devient à la date t+1 une cellule FEU1 si une de ses cellule voisine est une cellule FEU
-        if grid[x][y] == GameOfFire.FEU :
+        if self.grid[x][y] == GameOfFire.FEU :
             return GameOfFire.FEU1
-        return grid[x][y]
+        return self.grid[x][y]
 
-    @staticmethod
-    def rule_feu2_cell(grid, x, y):
+    def rule_feu2_cell(self, x, y):
         # Si à la date t on avait une cellule FEU1 alors elle devient à la date t+1 une cellule FEU2 si une de ses cellule voisine est une cellule FEU
-        if grid[x][y] == GameOfFire.FEU1 :
+        if self.grid[x][y] == GameOfFire.FEU1 :
             return GameOfFire.FEU2
-        return grid[x][y]
+        return self.grid[x][y]
 
-    @staticmethod
-    def rule_feu3_cell(grid, x, y):
+    def rule_feu3_cell(self, x, y):
         # Si à la date t on avait une cellule FEU2 alors elle devient à la date t+1 une cellule FEU3 si une de ses cellule voisine est une cellule FEU
-        if grid[x][y] == GameOfFire.FEU2 :
+        if self.grid[x][y] == GameOfFire.FEU2 :
             return GameOfFire.FEU3
-        return grid[x][y]
+        return self.grid[x][y]
 
-    @staticmethod
-    def rule_cendre_cell(grid, x, y):
-        if grid[x][y] == GameOfFire.FEU3:
+    def rule_cendre_cell(self, x, y):
+        if self.grid[x][y] == GameOfFire.FEU3:
          # Si à la date t on avait une cellule FEU3 alors elle devient à la date t+1 une cellule CENDRE
             return GameOfFire.CENDRE
-        return grid[x][y]
-
-
-    @staticmethod
-    def get_automaton(width, length):
-        """Create an Automaton, already set up with rules and states.
-
-        :param int width: the width of the grid of the automaton
-        :param int length: the length of the grid of the automaton
-        :return Automaton: an automaton with states and rules
-        """
-        ca = Automaton(width, length, GameOfFire.VIDE)
-        ca.states = [GameOfFire.FEU, GameOfFire.CENDRE, GameOfFire.VIDE, GameOfFire.ARBRE]
-        ca.rule = GameOfFire.rule
-        return ca
+        return self.grid[x][y]
 
 
 if __name__ == "__main__":
@@ -121,7 +119,7 @@ if __name__ == "__main__":
 
     app = QApplication([])
 
-    ca = GameOfFire.get_automaton(30, 30)
+    ca = GameOfFire(30, 30)
 
     # Initialize
     ca.random_initialize()

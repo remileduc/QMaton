@@ -36,7 +36,6 @@ class FileVisualizer:
         if file and os.path.exists(file):
             os.remove(file)
 
-
     def draw(self, automaton):
         """Callback for the AutomatonRunner."""
         if not self.file:
@@ -50,7 +49,7 @@ if __name__ == "__main__":
     from automaton import GameOfLife
     from qmaton import Automaton, AutomatonRunner
 
-    ca = GameOfLife.get_automaton(10, 10)
+    ca = GameOfLife(10, 10)
 
     ca.random_initialize()
     ar = AutomatonRunner(10, 100)

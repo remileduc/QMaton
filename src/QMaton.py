@@ -29,7 +29,7 @@ from visualizer import FileVisualizer
 
 
 if __name__ == "__main__":
-    ca = GameOfLife.get_automaton(10, 10)
+    ca = GameOfLife(10, 10)
 
     ca.random_initialize()
     ar = AutomatonRunner(10, 100)

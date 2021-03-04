@@ -37,7 +37,6 @@ class QtVisualizerWorker(QObject):
         self._automaton = automaton
         self._automatonRunner = automatonRunner
 
-
     def run(self):
         self.started.emit()
         self._automatonRunner.launch(self._automaton, lambda automaton: self.step_calculated.emit(automaton))
@@ -63,7 +62,6 @@ class QtVisualizer(QWidget):
         self.__layout.addWidget(self._button, line + 1, 0, -1, -1)
         self.draw()
 
-
     def draw(self, automaton=None):
         """Callback for the AutomatonRunner."""
         if not automaton:
@@ -72,7 +70,6 @@ class QtVisualizer(QWidget):
         for i in range(automaton.length):
             for j in range(automaton.width):
                 self.__layout.itemAtPosition(i, j).widget().setStyleSheet(f"QLabel {{ background-color : {grid[i][j].color} }}")
-
 
     def run(self, automatonRunner):
         # Create thread environment
@@ -89,7 +86,6 @@ class QtVisualizer(QWidget):
         self._button.setEnabled(False);
         self._thread.start()
 
-
     def stop(self):
         self._thread.exit(-1)
 
@@ -100,7 +96,7 @@ if __name__ == "__main__":
 
     app = QApplication([])
 
-    ca = GameOfLife.get_automaton(10, 10)
+    ca = GameOfLife(10, 10)
 
     # Initialize
     #ca.random_initialize()
