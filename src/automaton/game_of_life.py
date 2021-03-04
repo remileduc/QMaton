@@ -19,57 +19,50 @@
 """Game of life example."""
 
 
-from qmaton import Automaton, neighborhood
+from qmaton import Automaton, MooreNeighborhood, State
 
 
-class GameOfLife:
+class GameOfLife(Automaton):
     """Game of life example.
 
     See https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
     """
 
-    LIFE = Automaton.State('Life ', '#000')
+    LIFE = State('Life ', '#000')
     """Life state, black"""
-    DEATH = Automaton.State('Death', '#FFF')
+    DEATH = State('Death', '#FFF')
     """Death state, white"""
 
-
-    @staticmethod
-    @neighborhood.rule_margin(1)
-    def rule(grid, x, y):
-        if grid[x][y] == GameOfLife.DEATH:
-            return GameOfLife.rule_death_cell(grid, x, y)
-        elif grid[x][y] == GameOfLife.LIFE:
-            return GameOfLife.rule_life_cell(grid, x, y)
-        return grid[x][y]
-
-    @staticmethod
-    def rule_death_cell(grid, x, y):
-        if grid[x][y] == GameOfLife.DEATH and neighborhood.count_neighbors(grid, x, y, GameOfLife.LIFE) == 3:
-            return GameOfLife.LIFE
-        return grid[x][y]
-
-    @staticmethod
-    def rule_life_cell(grid, x, y):
-        if grid[x][y] != GameOfLife.LIFE:
-            return grid[x][y]
-        alive = neighborhood.count_neighbors(grid, x, y, GameOfLife.LIFE)
-        if alive == 2 or alive == 3:
-            return GameOfLife.LIFE
-        return GameOfLife.DEATH
-
-    @staticmethod
-    def get_automaton(width, length):
+    def __init__(self, width, length):
         """Create an Automaton, already set up with rules and states.
 
         :param int width: the width of the grid of the automaton
         :param int length: the length of the grid of the automaton
-        :return Automaton: an automaton with states and rules
         """
-        ca = Automaton(width, length, GameOfLife.DEATH)
-        ca.states = [GameOfLife.LIFE, GameOfLife.DEATH]
-        ca.rule = GameOfLife.rule
-        return ca
+        super().__init__(width, length, GameOfLife.DEATH)
+        self.states = [GameOfLife.LIFE, GameOfLife.DEATH]
+        self.rule = self.main_rule
+        self.neighborhood = MooreNeighborhood()
+
+    def main_rule(self, x, y):
+        if self.grid[x][y] == GameOfLife.DEATH:
+            return self.rule_death_cell(x, y)
+        elif self.grid[x][y] == GameOfLife.LIFE:
+            return self.rule_life_cell(x, y)
+        return self.grid[x][y]
+
+    def rule_death_cell(self, x, y):
+        if self.grid[x][y] == GameOfLife.DEATH and self.count_neighbors(self.neighborhood, x, y, (GameOfLife.LIFE,)) == 3:
+            return GameOfLife.LIFE
+        return self.grid[x][y]
+
+    def rule_life_cell(self, x, y):
+        if self.grid[x][y] != GameOfLife.LIFE:
+            return self.grid[x][y]
+        alive = self.count_neighbors(self.neighborhood, x, y, (GameOfLife.LIFE,))
+        if alive == 2 or alive == 3:
+            return GameOfLife.LIFE
+        return GameOfLife.DEATH
 
 
 if __name__ == "__main__":
@@ -78,7 +71,7 @@ if __name__ == "__main__":
 
     app = QApplication([])
 
-    ca = GameOfLife.get_automaton(30, 30)
+    ca = GameOfLife(30, 30)
 
     # Initialize
     ca.random_initialize()

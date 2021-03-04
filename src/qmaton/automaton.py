@@ -24,6 +24,14 @@ from collections import namedtuple
 from copy import deepcopy
 
 
+State = namedtuple('State', ['name', 'color'])
+"""State used by the Automaton.
+
+Each cell of the Automaton can be a State.
+A State is simply a name associated to a color.
+"""
+
+
 class Automaton:
     """"Grid of cells for the cellular automaton.
 
@@ -34,28 +42,21 @@ class Automaton:
     An iteration is calculated thanks to the method `apply_rule()`.
 
     Attributes:
-        width the width of the grid
-        length the length of the grid
+        grid_size the size of the grid
         states the list of State that can possibly take each cell of the grid
         rule the rule used to calculate an iteration
         grid the grid of cells
-    """
-
-    State = namedtuple('State', ['name', 'color'])
-    """State used by the Automaton.
-
-    Each cell of the Automaton can be a State.
-    A State is simply a name associated to a color.
+        neighborhood the type of neighborhood used
     """
 
     def __init__(self, width=10, length=10, default_value=None):
         """Constructor
 
         :param int width: the width of the grid
-        :param int length: the length of the string
+        :param int length: the length of the grid
+        :param State default_value: value used to fill the grid
         """
-        self.__width = width
-        self.__length = length
+        self.__grid_size = (width, length)
         self.__default_value = default_value
         self.states = []
         self.rule = None
@@ -75,12 +76,16 @@ class Automaton:
         return s
 
     @property
+    def grid_size(self):
+        return self.__grid_size
+
+    @property
     def width(self):
-        return self.__width
+        return self.__grid_size[0]
 
     @property
     def length(self):
-        return self.__length
+        return self.__grid_size[1]
 
     def random_initialize(self):
         """Initialize each cell of the grid with a random State from the list of states."""
@@ -98,9 +103,21 @@ class Automaton:
         # apply rules for each cell
         for i in range(self.length):
             for j in range(self.width):
-                new_grid[i][j] = self.rule(self.grid, i, j)
+                new_grid[i][j] = self.rule(i, j)
         self.grid = new_grid
 
+    def count_neighbors(self, neighborhood, x, y, states):
+        """
+        Count the neighbors of the cell grid[coordinate[0]][coordinate[1]] which state is in `states
+
+        :param Neighborhood neighborhood: the neighborhood to use
+        :param int x: the coordinate x of the cell
+        :param int y: the coordinate y of the cell
+        :param list states: the list of states that should be taken in account
+        :return: the number of cells in the neighborhood having a state in states
+        """
+        neighbors = neighborhood.get_neighbors_coordinates((x, y), self.grid_size)
+        return sum(1 for n in neighbors if self.grid[n[0]][n[1]] in states)
 
     def __init_grid(self):
         return [[self.__default_value for _ in range(self.width)] for _ in range(self.length)]
