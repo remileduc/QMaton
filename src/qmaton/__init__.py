@@ -28,6 +28,7 @@ This module contains all the logic for running a cellular automaton:
 
 from .automaton import *
 from .automaton_runner import *
+from .automaton_serializer import *
 from .neighborhood import *
 
 

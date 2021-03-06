@@ -19,9 +19,7 @@
 """Automaton class, represneting the grid of cells."""
 
 
-import random
 from collections import namedtuple
-from copy import deepcopy
 
 
 State = namedtuple('State', ['name', 'color'])
@@ -75,6 +73,9 @@ class Automaton:
             s += '\n'
         return s
 
+    def __eq__(self, other):
+        return self.states == other.states and self.grid == other.grid
+
     @property
     def grid_size(self):
         return self.__grid_size
@@ -89,6 +90,8 @@ class Automaton:
 
     def random_initialize(self):
         """Initialize each cell of the grid with a random State from the list of states."""
+        import random
+
         if self.states:
             random.seed()
             self.grid = [[self.states[random.randrange(len(self.states))]
@@ -118,6 +121,23 @@ class Automaton:
         """
         neighbors = neighborhood.get_neighbors_coordinates((x, y), self.grid_size)
         return sum(1 for n in neighbors if self.grid[n[0]][n[1]] in states)
+
+    def toJSON(self):
+        import json
+        from qmaton import AutomatonSerializer
+
+        return json.dumps(self, cls=AutomatonSerializer)
+
+    @classmethod
+    def fromJSON(cls, json_str):
+        import json
+        from qmaton import AutomatonSerializer
+
+        o = json.loads(json_str, object_hook=AutomatonSerializer.decode)
+        automaton = cls(o["grid_size"][0], o["grid_size"][1])
+        automaton.grid = o["grid"]
+        return automaton
+
 
     def __init_grid(self):
         return [[self.__default_value for _ in range(self.width)] for _ in range(self.length)]

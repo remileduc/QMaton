@@ -84,7 +84,7 @@ class GameOfFire(Automaton):
 
     def rule_feu_cell(self, x, y):
         # Si à la date t on avait une cellule ARBRE alors elle devient à la date t+1 une cellule FEU si une de ses cellule voisine est une cellule FEU
-        if self.grid[x][y] == GameOfFire.ARBRE and self.count_neighbors(self.neighborhood, x, y, (GameOfFire.FIRE_LIST)) >= 1:
+        if self.grid[x][y] == GameOfFire.ARBRE and self.count_neighbors(self.neighborhood, x, y, GameOfFire.FIRE_LIST) >= 1:
             return GameOfFire.FEU
         return self.grid[x][y]
 

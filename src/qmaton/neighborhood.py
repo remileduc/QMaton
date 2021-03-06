@@ -30,7 +30,6 @@ import enum
 import operator
 import itertools
 import math
-import numpy
 
 
 class EdgeRule(enum.Enum):
