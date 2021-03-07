@@ -21,8 +21,7 @@
 
 from collections import namedtuple
 
-
-State = namedtuple('State', ['name', 'color'])
+State = namedtuple("State", ["name", "color"])
 """State used by the Automaton.
 
 Each cell of the Automaton can be a State.
@@ -31,7 +30,7 @@ A State is simply a name associated to a color.
 
 
 class Automaton:
-    """"Grid of cells for the cellular automaton.
+    """Grid of cells for the cellular automaton.
 
     An Automaton is defined by a grid of cells, a list of State that can take
     each cell, and one rule that makes the cells change their state at
@@ -66,11 +65,11 @@ class Automaton:
         The name of the state of all the cells are written, seperated by a space
         for columns and newline for rows.
         """
-        s = ''
+        s = ""
         for line in self.grid:
             for cell in line:
-                s += cell.name + ' '
-            s += '\n'
+                s += cell.name + " "
+            s += "\n"
         return s
 
     def __eq__(self, other):
@@ -95,8 +94,9 @@ class Automaton:
 
         if self.states:
             random.seed()
-            self.grid = [[self.states[random.randrange(len(self.states))]
-                          for _ in range(self.width)] for _ in range(self.length)]
+            self.grid = [
+                [self.states[random.randrange(len(self.states))] for _ in range(self.width)] for _ in range(self.length)
+            ]
 
     def apply_rule(self):
         """Calculate an iteration of the cellular automaton.
@@ -128,6 +128,7 @@ class Automaton:
 
     def toJSON(self):
         import json
+
         from qmaton import AutomatonSerializer
 
         return json.dumps(self, cls=AutomatonSerializer)
@@ -135,13 +136,13 @@ class Automaton:
     @classmethod
     def fromJSON(cls, json_str):
         import json
+
         from qmaton import AutomatonSerializer
 
         o = json.loads(json_str, object_hook=AutomatonSerializer.decode)
         automaton = cls(o["grid_size"][0], o["grid_size"][1])
         automaton.grid = o["grid"]
         return automaton
-
 
     def __init_grid(self):
         return [[self.__default_value for _ in range(self.width)] for _ in range(self.length)]

@@ -28,9 +28,9 @@ class GameOfLife(Automaton):
     See https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
     """
 
-    LIFE = State('Life ', '#000')
+    LIFE = State("Life ", "#000")
     """Life state, black"""
-    DEATH = State('Death', '#FFF')
+    DEATH = State("Death", "#FFF")
     """Death state, white"""
 
     def __init__(self, length=10, width=10):
@@ -54,7 +54,10 @@ class GameOfLife(Automaton):
         return self.grid[x][y]
 
     def rule_death_cell(self, x, y):
-        if self.grid[x][y] == GameOfLife.DEATH and self.count_neighbors(self.neighborhood, x, y, (GameOfLife.LIFE,)) == 3:
+        if (
+            self.grid[x][y] == GameOfLife.DEATH
+            and self.count_neighbors(self.neighborhood, x, y, (GameOfLife.LIFE,)) == 3
+        ):
             return GameOfLife.LIFE
         return self.grid[x][y]
 

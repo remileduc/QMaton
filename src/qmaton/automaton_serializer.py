@@ -31,7 +31,7 @@ class AutomatonSerializer(JSONEncoder):
         return {
             "states": o.states,
             "grid_size": o.grid_size,
-            "grid": [[state.name for state in line] for line in o.grid]
+            "grid": [[state.name for state in line] for line in o.grid],
         }
 
     @staticmethod
@@ -45,7 +45,4 @@ class AutomatonSerializer(JSONEncoder):
             grid_size = tuple(o["grid_size"])
         if "grid" in o:
             grid = [[states[s] for s in line] for line in o["grid"]]
-        return {
-            "grid_size": grid_size,
-            "grid": grid
-        }
+        return {"grid_size": grid_size, "grid": grid}

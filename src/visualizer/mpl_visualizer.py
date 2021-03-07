@@ -34,6 +34,7 @@ class MPLVisualizer:
 
     def draw(self, automaton):
         """Callback for the AutomatonRunner."""
+
         class __State:
             def __init__(self, color):
                 self.color = color
@@ -51,13 +52,13 @@ class MPLVisualizer:
 
         plt.clf()
         for value in states.values():
-            plt.plot(value.x, value.y, 's', color=value.color)
+            plt.plot(value.x, value.y, "s", color=value.color)
         self.figure.canvas.draw()
 
 
 if __name__ == "__main__":
     from automaton import GameOfLife
-    from qmaton import Automaton, AutomatonRunner
+    from qmaton import AutomatonRunner
 
     ca = GameOfLife(10, 10)
 
@@ -65,6 +66,5 @@ if __name__ == "__main__":
     ar = AutomatonRunner(10, 100)
     av = MPLVisualizer(ca.width, ca.length)
 
-    #ar.launch(ca, av.draw)
+    # ar.launch(ca, av.draw)
     av.draw(ca)
-

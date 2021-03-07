@@ -71,5 +71,5 @@ class AutomatonRunner:
             if to_sleep > 0:
                 sleep(self.sleep_time)
             else:
-                print('Iteration took too long: {} s'.format(self.sleep_time - to_sleep))
+                print("Iteration took too long: {} s".format(self.sleep_time - to_sleep))
             i += 1

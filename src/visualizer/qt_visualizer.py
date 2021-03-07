@@ -20,7 +20,7 @@
 """Show the automaton in a UI window."""
 
 
-from PyQt5.QtCore import pyqtSignal, QObject, QThread
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from PyQt5.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
 from qmaton import Automaton, AutomatonRunner
 
@@ -69,7 +69,9 @@ class QtVisualizer(QWidget):
         grid = automaton.grid
         for i in range(automaton.length):
             for j in range(automaton.width):
-                self.__layout.itemAtPosition(i, j).widget().setStyleSheet(f"QLabel {{ background-color : {grid[i][j].color} }}")
+                self.__layout.itemAtPosition(i, j).widget().setStyleSheet(
+                    f"QLabel {{ background-color : {grid[i][j].color} }}"
+                )
 
     def run(self, automatonRunner):
         # Create thread environment
@@ -83,7 +85,7 @@ class QtVisualizer(QWidget):
         self._worker.finished.connect(self._worker.deleteLater)
         self._worker.step_calculated.connect(self.draw)
         # Start thread
-        self._button.setEnabled(False);
+        self._button.setEnabled(False)
         self._thread.start()
 
     def stop(self):
@@ -91,15 +93,15 @@ class QtVisualizer(QWidget):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
     from automaton import GameOfLife
+    from PyQt5.QtWidgets import QApplication
 
     app = QApplication([])
 
     ca = GameOfLife(7, 5)
 
     # Initialize
-    #ca.random_initialize()
+    # ca.random_initialize()
     ca.grid[1][1] = GameOfLife.LIFE
     ca.grid[1][2] = GameOfLife.LIFE
     ca.grid[2][1] = GameOfLife.LIFE

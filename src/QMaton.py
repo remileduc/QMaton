@@ -24,16 +24,15 @@ Launch the automaton. You can change the automaton and the visulaizer used below
 
 
 from automaton import GameOfLife
-from qmaton import Automaton, AutomatonRunner
+from qmaton import AutomatonRunner
 from visualizer import FileVisualizer
-
 
 if __name__ == "__main__":
     ca = GameOfLife(10, 10)
 
     ca.random_initialize()
     ar = AutomatonRunner(100, 10)
-    #av = FileVisualizer("test.txt")
+    # av = FileVisualizer("test.txt")
     av = FileVisualizer()
 
     ar.launch(ca, av.draw)

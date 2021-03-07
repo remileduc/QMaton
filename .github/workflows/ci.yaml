@@ -24,10 +24,8 @@ jobs:
           VALIDATE_EDITORCONFIG: true
           VALIDATE_JSON: true
           VALIDATE_MARKDOWN: true
-          VALIDATE_PYTHON: true
           VALIDATE_PYTHON_BLACK: true
           VALIDATE_PYTHON_FLAKE8: true
           VALIDATE_PYTHON_ISORT: true
-          VALIDATE_PYTHON_PYLINT: true
           VALIDATE_XML: true
           VALIDATE_YAML: true
