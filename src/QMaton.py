@@ -32,7 +32,7 @@ if __name__ == "__main__":
     ca = GameOfLife(10, 10)
 
     ca.random_initialize()
-    ar = AutomatonRunner(10, 100)
+    ar = AutomatonRunner(100, 10)
     #av = FileVisualizer("test.txt")
     av = FileVisualizer()
 

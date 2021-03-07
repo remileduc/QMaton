@@ -60,6 +60,9 @@ class Neighborhood:
         self._radius = radius
         self.__edge_rule = edge_rule
 
+    def is_on_edge(self, coordinate, grid_size):
+        return any(not(self._radius - 1 < ci < di - self._radius) for ci, di in zip(coordinate, grid_size))
+
     def get_neighbors_coordinates(self, coordinate, grid_size):
         """Get a list of absolute coordinates for the cell neighbors.
 
@@ -87,7 +90,7 @@ class Neighborhood:
                 yield tuple(reversed(coordinate))
 
     def __neighbors_generator(self, coordinate):
-        is_on_edge = any(not(self._radius - 1 < ci < di - self._radius) for ci, di in zip(coordinate, self._grid_size))
+        is_on_edge = self.is_on_edge(coordinate, self._grid_size)
         if self.__edge_rule == EdgeRule.IGNORE_EDGE_CELLS and is_on_edge:
             return
         for rel_n in self._rel_neighbors:

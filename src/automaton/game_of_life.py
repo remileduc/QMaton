@@ -33,18 +33,20 @@ class GameOfLife(Automaton):
     DEATH = State('Death', '#FFF')
     """Death state, white"""
 
-    def __init__(self, width, length):
+    def __init__(self, length=10, width=10):
         """Create an Automaton, already set up with rules and states.
 
-        :param int width: the width of the grid of the automaton
         :param int length: the length of the grid of the automaton
+        :param int width: the width of the grid of the automaton
         """
-        super().__init__(width, length, GameOfLife.DEATH)
+        super().__init__(length, width, GameOfLife.DEATH)
         self.states = [GameOfLife.LIFE, GameOfLife.DEATH]
         self.rule = self.main_rule
         self.neighborhood = MooreNeighborhood()
 
     def main_rule(self, x, y):
+        if self.is_on_edge(self.neighborhood, x, y):
+            return self.grid[x][y]
         if self.grid[x][y] == GameOfLife.DEATH:
             return self.rule_death_cell(x, y)
         elif self.grid[x][y] == GameOfLife.LIFE:

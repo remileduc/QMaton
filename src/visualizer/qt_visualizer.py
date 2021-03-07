@@ -58,7 +58,7 @@ class QtVisualizer(QWidget):
                 self.__layout.addWidget(QLabel(self), line, cell)
 
         self._button = QPushButton("Start", self)
-        self._button.clicked.connect(lambda: self.run(AutomatonRunner(10, 1)))
+        self._button.clicked.connect(lambda: self.run(AutomatonRunner(1, 10)))
         self.__layout.addWidget(self._button, line + 1, 0, -1, -1)
         self.draw()
 
@@ -96,15 +96,20 @@ if __name__ == "__main__":
 
     app = QApplication([])
 
-    ca = GameOfLife(10, 10)
+    ca = GameOfLife(7, 5)
 
     # Initialize
     #ca.random_initialize()
-    ca.grid[2][3] = GameOfLife.LIFE
-    ca.grid[3][4] = GameOfLife.LIFE
+    ca.grid[1][1] = GameOfLife.LIFE
+    ca.grid[1][2] = GameOfLife.LIFE
+    ca.grid[2][1] = GameOfLife.LIFE
+    ca.grid[2][2] = GameOfLife.LIFE
+    ca.grid[4][1] = GameOfLife.LIFE
     ca.grid[4][2] = GameOfLife.LIFE
-    ca.grid[4][3] = GameOfLife.LIFE
-    ca.grid[4][4] = GameOfLife.LIFE
+    ca.grid[5][4] = GameOfLife.LIFE
+    ca.grid[6][0] = GameOfLife.LIFE
+    ca.grid[6][3] = GameOfLife.LIFE
+    ca.grid[6][4] = GameOfLife.LIFE
 
     av = QtVisualizer(ca)
 

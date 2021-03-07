@@ -48,8 +48,8 @@ class GameOfFire(Automaton):
         FEU3
     )
 
-    def __init__(self, width, length):
-        super().__init__(width, length, GameOfFire.VIDE)
+    def __init__(self, length=10, width=10):
+        super().__init__(length, width, GameOfFire.VIDE)
         self.states = [
             GameOfFire.FEU,
             GameOfFire.FEU1,

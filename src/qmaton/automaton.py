@@ -47,14 +47,14 @@ class Automaton:
         neighborhood the type of neighborhood used
     """
 
-    def __init__(self, width=10, length=10, default_value=None):
+    def __init__(self, length=10, width=10, default_value=None):
         """Constructor
 
-        :param int width: the width of the grid
         :param int length: the length of the grid
+        :param int width: the width of the grid
         :param State default_value: value used to fill the grid
         """
-        self.__grid_size = (width, length)
+        self.__grid_size = (length, width)
         self.__default_value = default_value
         self.states = []
         self.rule = None
@@ -78,14 +78,15 @@ class Automaton:
 
     @property
     def grid_size(self):
+        """Return the size of the grid in a tuple (length, width)."""
         return self.__grid_size
 
     @property
-    def width(self):
+    def length(self):
         return self.__grid_size[0]
 
     @property
-    def length(self):
+    def width(self):
         return self.__grid_size[1]
 
     def random_initialize(self):
@@ -108,6 +109,9 @@ class Automaton:
             for j in range(self.width):
                 new_grid[i][j] = self.rule(i, j)
         self.grid = new_grid
+
+    def is_on_edge(self, neighborhood, x, y):
+        return neighborhood.is_on_edge((x, y), self.grid_size)
 
     def count_neighbors(self, neighborhood, x, y, states):
         """
