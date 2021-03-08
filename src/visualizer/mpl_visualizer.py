@@ -54,17 +54,3 @@ class MPLVisualizer:
         for value in states.values():
             plt.plot(value.x, value.y, "s", color=value.color)
         self.figure.canvas.draw()
-
-
-if __name__ == "__main__":
-    from automaton import GameOfLife
-    from qmaton import AutomatonRunner
-
-    ca = GameOfLife(10, 10)
-
-    ca.random_initialize()
-    ar = AutomatonRunner(10, 100)
-    av = MPLVisualizer(ca.width, ca.length)
-
-    # ar.launch(ca, av.draw)
-    av.draw(ca)

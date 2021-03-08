@@ -68,20 +68,3 @@ class GameOfLife(Automaton):
         if alive == 2 or alive == 3:
             return GameOfLife.LIFE
         return GameOfLife.DEATH
-
-
-if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
-    from visualizer import QtVisualizer
-
-    app = QApplication([])
-
-    ca = GameOfLife(30, 30)
-
-    # Initialize
-    ca.random_initialize()
-
-    av = QtVisualizer(ca)
-
-    av.show()
-    app.exec_()

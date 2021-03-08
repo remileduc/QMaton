@@ -42,18 +42,3 @@ class FileVisualizer:
             return
         with open(self.file, "a") as f:
             f.write(str(automaton) + "\n")
-
-
-if __name__ == "__main__":
-    from automaton import GameOfLife
-    from qmaton import AutomatonRunner
-
-    ca = GameOfLife(10, 10)
-
-    ca.random_initialize()
-    ar = AutomatonRunner(10, 100)
-    av = FileVisualizer("test.txt")
-    # av = FileVisualizer()
-
-    ar.launch(ca, av.draw)
-    av.draw(ca)
