@@ -50,6 +50,16 @@ class Neighborhood:
     The number of cells in the neighborhood of a cell depends on the radius and the edge rule.
     """
 
+    @staticmethod
+    def is_on_edge(coordinate, grid_size, radius):
+        """Tell if the cell in the coordinates (x, y) is on the edge of the grid
+
+        :param tuple coordinate: the coordinates of the cell (x, y)
+        :param tuple grid_size: the size of the grid (length, width)
+        :param int radius: the margin for the grid
+        """
+        return any(not (radius - 1 < ci < di - radius) for ci, di in zip(coordinate, grid_size))
+
     def __init__(self, edge_rule=EdgeRule.IGNORE_EDGE_CELLS, radius=1):
         """General class for all Neighborhoods.
         :param edge_rule:   Rule to define, how cells on the edge of the grid will be handled.
@@ -60,9 +70,6 @@ class Neighborhood:
         self._grid_size = ()
         self._radius = radius
         self.__edge_rule = edge_rule
-
-    def is_on_edge(self, coordinate, grid_size):
-        return any(not (self._radius - 1 < ci < di - self._radius) for ci, di in zip(coordinate, grid_size))
 
     def get_neighbors_coordinates(self, coordinate, grid_size):
         """Get a list of absolute coordinates for the cell neighbors.
@@ -91,7 +98,7 @@ class Neighborhood:
                 yield tuple(reversed(coordinate))
 
     def __neighbors_generator(self, coordinate):
-        is_on_edge = self.is_on_edge(coordinate, self._grid_size)
+        is_on_edge = Neighborhood.is_on_edge(coordinate, self._grid_size, self._radius)
         if self.__edge_rule == EdgeRule.IGNORE_EDGE_CELLS and is_on_edge:
             return
         for rel_n in self._rel_neighbors:

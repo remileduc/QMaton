@@ -21,6 +21,8 @@
 
 from collections import namedtuple
 
+from .neighborhood import Neighborhood
+
 State = namedtuple("State", ["name", "color"])
 """State used by the Automaton.
 
@@ -110,8 +112,14 @@ class Automaton:
                 new_grid[i][j] = self.rule(i, j)
         self.grid = new_grid
 
-    def is_on_edge(self, neighborhood, x, y):
-        return neighborhood.is_on_edge((x, y), self.grid_size)
+    def is_on_edge(self, x, y, radius=1):
+        """Tell if the cell in the coordinates (x, y) is on the edge of the grid
+
+        :param int x: x coorindate
+        :param int y: y coordinate
+        :param int radius: the margin for the grid
+        """
+        return Neighborhood.is_on_edge((x, y), self.grid_size, radius)
 
     def count_neighbors(self, neighborhood, x, y, states):
         """
@@ -127,14 +135,16 @@ class Automaton:
         return sum(1 for n in neighbors if self.grid[n[0]][n[1]] in states)
 
     def toJSON(self):
+        """Return a JSON string representation of the automaton."""
         import json
 
         from qmaton import AutomatonSerializer
 
-        return json.dumps(self, cls=AutomatonSerializer)
+        return json.dumps(self, indent=4, cls=AutomatonSerializer)
 
     @classmethod
     def fromJSON(cls, json_str):
+        """Create an automaton from the JSON string."""
         import json
 
         from qmaton import AutomatonSerializer

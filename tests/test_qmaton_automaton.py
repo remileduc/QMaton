@@ -85,6 +85,45 @@ def test_apply_rule():
 
 @mark.parametrize(
     ("coordinate", "result"),
+    (
+        ((0, 0), True),
+        ((0, 1), True),
+        ((0, 2), True),
+        ((0, 3), True),
+        ((0, 4), True),
+        ((0, 5), True),
+        ((1, 0), True),
+        ((1, 1), True),
+        ((1, 2), True),
+        ((1, 3), True),
+        ((1, 4), True),
+        ((1, 5), True),
+        ((2, 0), True),
+        ((2, 1), True),
+        ((2, 2), False),
+        ((2, 3), False),
+        ((2, 4), True),
+        ((2, 5), True),
+        ((3, 0), True),
+        ((3, 1), True),
+        ((3, 2), True),
+        ((3, 3), True),
+        ((3, 4), True),
+        ((3, 5), True),
+        ((4, 0), True),
+        ((4, 1), True),
+        ((4, 2), True),
+        ((4, 3), True),
+        ((4, 4), True),
+        ((4, 5), True),
+    ),
+)
+def test_is_on_edge(coordinate, result):
+    assert Automaton(5, 6).is_on_edge(*coordinate, 2) == result
+
+
+@mark.parametrize(
+    ("coordinate", "result"),
     (((0, 0), 3), ((0, 1), 5), ((1, 1), 8), ((2, 2), 5), ((3, 2), 3)),
 )
 def test_count_neighbors(coordinate, result):

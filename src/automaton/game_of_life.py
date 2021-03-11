@@ -45,7 +45,7 @@ class GameOfLife(Automaton):
         self.neighborhood = MooreNeighborhood()
 
     def main_rule(self, x, y):
-        if self.is_on_edge(self.neighborhood, x, y):
+        if self.is_on_edge(x, y):
             return self.grid[x][y]
         if self.grid[x][y] == GameOfLife.DEATH:
             return self.rule_death_cell(x, y)

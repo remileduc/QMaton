@@ -102,7 +102,7 @@ def test_cyclic_dimensions(coordinate, expected_neighborhood):
     ),
 )
 def test_is_on_edge(coordinate, result):
-    assert Neighborhood().is_on_edge(coordinate, (5, 4)) is result
+    assert Neighborhood.is_on_edge(coordinate, (5, 4), 1) is result
 
 
 def test_von_neumann_r1():
