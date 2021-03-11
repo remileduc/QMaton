@@ -28,23 +28,25 @@ class GameOfLife(Automaton):
     See https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
     """
 
-    LIFE = State('Life ', '#000')
+    LIFE = State("Life ", "#000")
     """Life state, black"""
-    DEATH = State('Death', '#FFF')
+    DEATH = State("Death", "#FFF")
     """Death state, white"""
 
-    def __init__(self, width, length):
+    def __init__(self, length=10, width=10):
         """Create an Automaton, already set up with rules and states.
 
-        :param int width: the width of the grid of the automaton
         :param int length: the length of the grid of the automaton
+        :param int width: the width of the grid of the automaton
         """
-        super().__init__(width, length, GameOfLife.DEATH)
+        super().__init__(length, width, GameOfLife.DEATH)
         self.states = [GameOfLife.LIFE, GameOfLife.DEATH]
         self.rule = self.main_rule
         self.neighborhood = MooreNeighborhood()
 
     def main_rule(self, x, y):
+        if self.is_on_edge(x, y):
+            return self.grid[x][y]
         if self.grid[x][y] == GameOfLife.DEATH:
             return self.rule_death_cell(x, y)
         elif self.grid[x][y] == GameOfLife.LIFE:
@@ -52,7 +54,10 @@ class GameOfLife(Automaton):
         return self.grid[x][y]
 
     def rule_death_cell(self, x, y):
-        if self.grid[x][y] == GameOfLife.DEATH and self.count_neighbors(self.neighborhood, x, y, (GameOfLife.LIFE,)) == 3:
+        if (
+            self.grid[x][y] == GameOfLife.DEATH
+            and self.count_neighbors(self.neighborhood, x, y, (GameOfLife.LIFE,)) == 3
+        ):
             return GameOfLife.LIFE
         return self.grid[x][y]
 
@@ -63,20 +68,3 @@ class GameOfLife(Automaton):
         if alive == 2 or alive == 3:
             return GameOfLife.LIFE
         return GameOfLife.DEATH
-
-
-if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
-    from visualizer import QtVisualizer
-
-    app = QApplication([])
-
-    ca = GameOfLife(30, 30)
-
-    # Initialize
-    ca.random_initialize()
-
-    av = QtVisualizer(ca)
-
-    av.show()
-    app.exec_()

@@ -27,13 +27,14 @@ Utils functions and class to deal with neighborhood of a cell.
 """
 
 import enum
-import operator
 import itertools
 import math
+import operator
 
 
 class EdgeRule(enum.Enum):
     """ Enum for different possibilities to handle the edge of the automaton. """
+
     IGNORE_EDGE_CELLS = 0
     """Cells on the edge are ignored and will never change."""
     IGNORE_MISSING_NEIGHBORS_OF_EDGE_CELLS = 1
@@ -48,6 +49,16 @@ class Neighborhood:
 
     The number of cells in the neighborhood of a cell depends on the radius and the edge rule.
     """
+
+    @staticmethod
+    def is_on_edge(coordinate, grid_size, radius):
+        """Tell if the cell in the coordinates (x, y) is on the edge of the grid
+
+        :param tuple coordinate: the coordinates of the cell (x, y)
+        :param tuple grid_size: the size of the grid (length, width)
+        :param int radius: the margin for the grid
+        """
+        return any(not (radius - 1 < ci < di - radius) for ci, di in zip(coordinate, grid_size))
 
     def __init__(self, edge_rule=EdgeRule.IGNORE_EDGE_CELLS, radius=1):
         """General class for all Neighborhoods.
@@ -83,17 +94,18 @@ class Neighborhood:
 
     def __neighborhood_generator(self):
         for coordinate in itertools.product(range(-self._radius, self._radius + 1), repeat=len(self._grid_size)):
-            if coordinate != (0, ) * len(self._grid_size) and self._neighbor_rule(coordinate):
+            if coordinate != (0,) * len(self._grid_size) and self._neighbor_rule(coordinate):
                 yield tuple(reversed(coordinate))
 
     def __neighbors_generator(self, coordinate):
-        is_on_edge = any(not(self._radius - 1 < ci < di - self._radius) for ci, di in zip(coordinate, self._grid_size))
+        is_on_edge = Neighborhood.is_on_edge(coordinate, self._grid_size, self._radius)
         if self.__edge_rule == EdgeRule.IGNORE_EDGE_CELLS and is_on_edge:
             return
         for rel_n in self._rel_neighbors:
             if is_on_edge:
-                n, n_folded = zip(*[(ni + ci, (ni + di + ci) % di)
-                                    for ci, ni, di in zip(coordinate, rel_n, self._grid_size)])
+                n, n_folded = zip(
+                    *[(ni + ci, (ni + di + ci) % di) for ci, ni, di in zip(coordinate, rel_n, self._grid_size)]
+                )
                 if self.__edge_rule == EdgeRule.FIRST_AND_LAST_CELL_OF_DIMENSION_ARE_NEIGHBORS or n == n_folded:
                     yield n_folded
             else:
@@ -106,37 +118,37 @@ class Neighborhood:
 
 
 class MooreNeighborhood(Neighborhood):
-    """ Moore defined a neighborhood with a radius applied on a the non euclidean distance to other cells in the grid.
-        Example:
-            2 dimensions
-            C = cell of interest
-            N = neighbor of cell
-            X = no neighbor of cell
+    """Moore defined a neighborhood with a radius applied on a the non euclidean distance to other cells in the grid.
+    Example:
+        2 dimensions
+        C = cell of interest
+        N = neighbor of cell
+        X = no neighbor of cell
 
-                  Radius 1                     Radius 2
-               X  X  X  X  X                N  N  N  N  N
-               X  N  N  N  X                N  N  N  N  N
-               X  N  C  N  X                N  N  C  N  N
-               X  N  N  N  X                N  N  N  N  N
-               X  X  X  X  X                N  N  N  N  N
+              Radius 1                     Radius 2
+           X  X  X  X  X                N  N  N  N  N
+           X  N  N  N  X                N  N  N  N  N
+           X  N  C  N  X                N  N  C  N  N
+           X  N  N  N  X                N  N  N  N  N
+           X  X  X  X  X                N  N  N  N  N
     """
 
 
 class VonNeumannNeighborhood(Neighborhood):
-    """ Von Neumann defined a neighborhood with a radius applied to Manhatten distance
-        (steps between cells without diagonal movement).
-        Example:
-            2 dimensions
-            C = cell of interest
-            N = neighbor of cell
-            X = no neighbor of cell
+    """Von Neumann defined a neighborhood with a radius applied to Manhatten distance
+    (steps between cells without diagonal movement).
+    Example:
+        2 dimensions
+        C = cell of interest
+        N = neighbor of cell
+        X = no neighbor of cell
 
-                  Radius 1                     Radius 2
-               X  X  X  X  X                X  X  N  X  X
-               X  X  N  X  X                X  N  N  N  X
-               X  N  C  N  X                N  N  C  N  N
-               X  X  N  X  X                X  N  N  N  X
-               X  X  X  X  X                X  X  N  X  X
+              Radius 1                     Radius 2
+           X  X  X  X  X                X  X  N  X  X
+           X  X  N  X  X                X  N  N  N  X
+           X  N  C  N  X                N  N  C  N  N
+           X  X  N  X  X                X  N  N  N  X
+           X  X  X  X  X                X  X  N  X  X
     """
 
     def _neighbor_rule(self, rel_neighbor):
@@ -147,25 +159,25 @@ class VonNeumannNeighborhood(Neighborhood):
 
 
 class RadialNeighborhood(Neighborhood):
-    """ Neighborhood with a radius applied to euclidean distance + delta
+    """Neighborhood with a radius applied to euclidean distance + delta
 
-        Example:
-            2 dimensions
-            C = cell of interest
-            N = neighbor of cell
-            X = no neighbor of cell
+    Example:
+        2 dimensions
+        C = cell of interest
+        N = neighbor of cell
+        X = no neighbor of cell
 
-                  Radius 2                     Radius 3
-            X  X  X  X  X  X  X          X  X  N  N  N  X  X
-            X  X  N  N  N  X  X          X  N  N  N  N  N  X
-            X  N  N  N  N  N  X          N  N  N  N  N  N  N
-            X  N  N  C  N  N  X          N  N  N  C  N  N  N
-            X  N  N  N  N  N  X          N  N  N  N  N  N  N
-            X  X  N  N  N  X  X          X  N  N  N  N  N  X
-            X  X  X  X  X  X  X          X  X  N  N  N  X  X
+              Radius 2                     Radius 3
+        X  X  X  X  X  X  X          X  X  N  N  N  X  X
+        X  X  N  N  N  X  X          X  N  N  N  N  N  X
+        X  N  N  N  N  N  X          N  N  N  N  N  N  N
+        X  N  N  C  N  N  X          N  N  N  C  N  N  N
+        X  N  N  N  N  N  X          N  N  N  N  N  N  N
+        X  X  N  N  N  X  X          X  N  N  N  N  N  X
+        X  X  X  X  X  X  X          X  X  N  N  N  X  X
     """
 
-    def __init__(self, *args, delta_=.25, **kwargs):
+    def __init__(self, *args, delta_=0.25, **kwargs):
         self.delta = delta_
         super().__init__(*args, **kwargs)
 
@@ -177,36 +189,36 @@ class RadialNeighborhood(Neighborhood):
 
 
 class HexagonalNeighborhood(Neighborhood):
-    """ Defines a Hexagonal neighborhood in a rectangular two dimensional grid:
+    """Defines a Hexagonal neighborhood in a rectangular two dimensional grid:
 
-        Example:
-            Von Nexagonal neighborhood in 2 dimensions with radius 1 and 2
-            C = cell of interest
-            N = neighbor of cell
-            X = no neighbor of cell
+    Example:
+        Von Nexagonal neighborhood in 2 dimensions with radius 1 and 2
+        C = cell of interest
+        N = neighbor of cell
+        X = no neighbor of cell
 
-                  Radius 1                     Radius 2
-               X   X   X   X   X           X   N   N   N   X
-                 X   N   N   X               N   N   N   N
-               X   N   C   N   X           N   N   C   N   N
-                 X   N   N   X               N   N   N   N
-               X   X   X   X   X           X   N   N   N   X
+              Radius 1                     Radius 2
+           X   X   X   X   X           X   N   N   N   X
+             X   N   N   X               N   N   N   N
+           X   N   C   N   X           N   N   C   N   N
+             X   N   N   X               N   N   N   N
+           X   X   X   X   X           X   N   N   N   X
 
 
-        Rectangular representation: Radius 1
+    Rectangular representation: Radius 1
 
-          Row % 2 == 0            Row % 2 == 1
-            N  N  X                 X  N  N
-            N  C  N                 N  C  N
-            N  N  X                 X  N  N
+      Row % 2 == 0            Row % 2 == 1
+        N  N  X                 X  N  N
+        N  C  N                 N  C  N
+        N  N  X                 X  N  N
 
-        Rectangular representation: Radius 2
-          Row % 2 == 0            Row % 2 == 1
-          X  N  N  N  X           X  N  N  N  X
-          N  N  N  N  X           X  N  N  N  N
-          N  N  C  N  N           N  N  C  N  N
-          N  N  N  N  X           X  N  N  N  N
-          X  N  N  N  X           X  N  N  N  X
+    Rectangular representation: Radius 2
+      Row % 2 == 0            Row % 2 == 1
+      X  N  N  N  X           X  N  N  N  X
+      N  N  N  N  X           X  N  N  N  N
+      N  N  C  N  N           N  N  C  N  N
+      N  N  N  N  X           X  N  N  N  N
+      X  N  N  N  X           X  N  N  N  X
     """
 
     def __init__(self, *args, radius=1, **kwargs):
@@ -222,7 +234,7 @@ class HexagonalNeighborhood(Neighborhood):
         new_neighbours = []
         for x in range(0, radius + 1):
             if is_odd:
-                x -= int(radius/2)
+                x -= int(radius / 2)
             else:
                 x -= int((radius + 1) / 2)
 
@@ -245,8 +257,8 @@ class HexagonalNeighborhood(Neighborhood):
         neighbor_lists = [[(0, 0)], [(0, 0)]]
         for radius_i in range(1, radius + 1):
             for i, neighbor in enumerate(neighbor_lists):
-                neighbor = __grow_neighbours(neighbor)
-                neighbor = self.__add_rectangular_neighbours(neighbor, radius_i, i % 2 == 1)
+                neighbor = HexagonalNeighborhood.__grow_neighbours(neighbor)
+                neighbor = HexagonalNeighborhood.__add_rectangular_neighbours(neighbor, radius_i, i % 2 == 1)
                 neighbor = sorted(neighbor, key=(lambda ne: [ne[1], ne[0]]))
                 neighbor.remove((0, 0))
                 neighbor_lists[i] = neighbor

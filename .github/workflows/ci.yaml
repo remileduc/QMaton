@@ -1,0 +1,57 @@
+name: Generic CI
+
+on:
+  - pull_request
+  - workflow_dispatch
+
+jobs:
+  # Runs linters
+  super-lint:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+
+      - name: Run Super-Linter
+        uses: github/super-linter@master
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LOG_LEVEL: NOTICE
+          VALIDATE_EDITORCONFIG: true
+          VALIDATE_JSON: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_PYTHON_BLACK: true
+          VALIDATE_PYTHON_FLAKE8: true
+          VALIDATE_PYTHON_ISORT: true
+          VALIDATE_XML: true
+          VALIDATE_YAML: true
+
+  # Runs tests
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Set up Python
+        uses: actions/setup-python@main
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-tests.txt
+
+      - name: Run tests and coverage
+        run: PYTHONPATH=$PYTHONPATH:$(pwd)/src pytest --cache-clear --cov=src tests/ > pytest-coverage.txt
+
+      - name: Comment Coverage
+        uses: coroo/pytest-coverage-commentator@main
+        if: ${{ always() }}

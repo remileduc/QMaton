@@ -33,11 +33,11 @@ class AutomatonRunner:
         nb_iter the number of iterations to do
     """
 
-    def __init__(self, iter_per_second=10, nb_iter=100):
+    def __init__(self, nb_iter=100, iter_per_second=10):
         """Constructor
 
-        :param float iter_per_second: number of iterations per second (can't be 0)
         :param int nb_iter: the number of iterations to realize
+        :param float iter_per_second: number of iterations per second (can't be 0)
         """
         self.sleep_time = 1 / iter_per_second
         self.nb_iter = nb_iter
@@ -71,5 +71,5 @@ class AutomatonRunner:
             if to_sleep > 0:
                 sleep(self.sleep_time)
             else:
-                print('iteration took too long: {} s'.format(self.sleep_time - to_sleep))
+                print("Iteration took too long: {} s".format(self.sleep_time - to_sleep))
             i += 1

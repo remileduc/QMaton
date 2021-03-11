@@ -21,8 +21,9 @@
 
 from collections import namedtuple
 
+from .neighborhood import Neighborhood
 
-State = namedtuple('State', ['name', 'color'])
+State = namedtuple("State", ["name", "color"])
 """State used by the Automaton.
 
 Each cell of the Automaton can be a State.
@@ -31,7 +32,7 @@ A State is simply a name associated to a color.
 
 
 class Automaton:
-    """"Grid of cells for the cellular automaton.
+    """Grid of cells for the cellular automaton.
 
     An Automaton is defined by a grid of cells, a list of State that can take
     each cell, and one rule that makes the cells change their state at
@@ -47,14 +48,14 @@ class Automaton:
         neighborhood the type of neighborhood used
     """
 
-    def __init__(self, width=10, length=10, default_value=None):
+    def __init__(self, length=10, width=10, default_value=None):
         """Constructor
 
-        :param int width: the width of the grid
         :param int length: the length of the grid
+        :param int width: the width of the grid
         :param State default_value: value used to fill the grid
         """
-        self.__grid_size = (width, length)
+        self.__grid_size = (length, width)
         self.__default_value = default_value
         self.states = []
         self.rule = None
@@ -66,11 +67,11 @@ class Automaton:
         The name of the state of all the cells are written, seperated by a space
         for columns and newline for rows.
         """
-        s = ''
+        s = ""
         for line in self.grid:
             for cell in line:
-                s += cell.name + ' '
-            s += '\n'
+                s += cell.name + " "
+            s += "\n"
         return s
 
     def __eq__(self, other):
@@ -78,14 +79,15 @@ class Automaton:
 
     @property
     def grid_size(self):
+        """Return the size of the grid in a tuple (length, width)."""
         return self.__grid_size
 
     @property
-    def width(self):
+    def length(self):
         return self.__grid_size[0]
 
     @property
-    def length(self):
+    def width(self):
         return self.__grid_size[1]
 
     def random_initialize(self):
@@ -94,8 +96,9 @@ class Automaton:
 
         if self.states:
             random.seed()
-            self.grid = [[self.states[random.randrange(len(self.states))]
-                          for _ in range(self.width)] for _ in range(self.length)]
+            self.grid = [
+                [self.states[random.randrange(len(self.states))] for _ in range(self.width)] for _ in range(self.length)
+            ]
 
     def apply_rule(self):
         """Calculate an iteration of the cellular automaton.
@@ -108,6 +111,15 @@ class Automaton:
             for j in range(self.width):
                 new_grid[i][j] = self.rule(i, j)
         self.grid = new_grid
+
+    def is_on_edge(self, x, y, radius=1):
+        """Tell if the cell in the coordinates (x, y) is on the edge of the grid
+
+        :param int x: x coorindate
+        :param int y: y coordinate
+        :param int radius: the margin for the grid
+        """
+        return Neighborhood.is_on_edge((x, y), self.grid_size, radius)
 
     def count_neighbors(self, neighborhood, x, y, states):
         """
@@ -123,21 +135,24 @@ class Automaton:
         return sum(1 for n in neighbors if self.grid[n[0]][n[1]] in states)
 
     def toJSON(self):
+        """Return a JSON string representation of the automaton."""
         import json
+
         from qmaton import AutomatonSerializer
 
-        return json.dumps(self, cls=AutomatonSerializer)
+        return json.dumps(self, indent=4, cls=AutomatonSerializer)
 
     @classmethod
     def fromJSON(cls, json_str):
+        """Create an automaton from the JSON string."""
         import json
+
         from qmaton import AutomatonSerializer
 
         o = json.loads(json_str, object_hook=AutomatonSerializer.decode)
         automaton = cls(o["grid_size"][0], o["grid_size"][1])
         automaton.grid = o["grid"]
         return automaton
-
 
     def __init_grid(self):
         return [[self.__default_value for _ in range(self.width)] for _ in range(self.length)]

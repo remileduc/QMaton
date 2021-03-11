@@ -16,6 +16,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+
 """QMaton main module.
 
 This module contains all the logic for running a cellular automaton:
@@ -30,6 +32,3 @@ from .automaton import *
 from .automaton_runner import *
 from .automaton_serializer import *
 from .neighborhood import *
-
-
-__all__ = ["automaton", "automaton_runner"]

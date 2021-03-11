@@ -25,17 +25,34 @@ from qmaton import Automaton, State
 
 
 class AutomatonSerializer(JSONEncoder):
+    """Class used to serialize an automaton to JSON.
+
+    This is an internal class and shouldn't be used directly. Prefer the methods Automaton.toJSON()
+    and Automaton.fromJSON().
+    """
+
     def default(self, o):
+        """Method used to serialize automaton to JSON.
+
+        Use this way: json.dumps(automaton, cls=AutomatonSerializer)
+        """
+
         if not isinstance(o, Automaton):
             return super().default(o)
         return {
             "states": o.states,
             "grid_size": o.grid_size,
-            "grid": [[state.name for state in line] for line in o.grid]
+            "grid": [[state.name for state in line] for line in o.grid],
         }
 
     @staticmethod
     def decode(o):
+        """Method used to deserialize an Automaton from a JSON string.
+
+        To use it, you first need to know the type of the automaton. It is easier to use
+        Automaton.fromJSON(str_json, object_hook=AutomatonSerializer.decode)
+        """
+
         states = {}
         grid_size = (0, 0)
         grid = [[]]
@@ -45,7 +62,4 @@ class AutomatonSerializer(JSONEncoder):
             grid_size = tuple(o["grid_size"])
         if "grid" in o:
             grid = [[states[s] for s in line] for line in o["grid"]]
-        return {
-            "grid_size": grid_size,
-            "grid": grid
-        }
+        return {"grid_size": grid_size, "grid": grid}

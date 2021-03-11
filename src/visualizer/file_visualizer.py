@@ -30,7 +30,7 @@ class FileVisualizer:
         file the file where to write results. If not set, print on console.
     """
 
-    def __init__(self, file = ''):
+    def __init__(self, file=""):
         self.file = file
         if file and os.path.exists(file):
             os.remove(file)
@@ -40,20 +40,5 @@ class FileVisualizer:
         if not self.file:
             print(automaton)
             return
-        with open(self.file, 'a') as f:
-            f.write(str(automaton) + '\n')
-
-
-if __name__ == "__main__":
-    from automaton import GameOfLife
-    from qmaton import Automaton, AutomatonRunner
-
-    ca = GameOfLife(10, 10)
-
-    ca.random_initialize()
-    ar = AutomatonRunner(10, 100)
-    av = FileVisualizer("test.txt")
-    #av = FileVisualizer()
-
-    ar.launch(ca, av.draw)
-    av.draw(ca)
+        with open(self.file, "a") as f:
+            f.write(str(automaton) + "\n")
