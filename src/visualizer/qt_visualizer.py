@@ -20,8 +20,8 @@
 """Show the automaton in a UI window."""
 
 
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
-from PyQt5.QtWidgets import QGridLayout, QLabel, QPushButton, QWidget
+from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QGridLayout, QLabel, QWidget
 from qmaton import Automaton, AutomatonRunner
 
 
@@ -37,6 +37,7 @@ class QtVisualizerWorker(QObject):
         self._automaton = automaton
         self._automatonRunner = automatonRunner
 
+    @pyqtSlot()
     def run(self):
         self.started.emit()
         self._automatonRunner.launch(self._automaton, lambda automaton: self.step_calculated.emit(automaton))
@@ -46,22 +47,27 @@ class QtVisualizerWorker(QObject):
 class QtVisualizer(QWidget):
     """Show the automaton in a UI window."""
 
-    def __init__(self, automaton, parent=None):
+    started = pyqtSignal()
+    finished = pyqtSignal()
+    step_calculated = pyqtSignal(Automaton)
+
+    def __init__(self, parent=None):
         super().__init__(parent)
         self._thread = None
         self._worker = None
-        self._automaton = automaton
+        self._automaton = None
         self.__layout = QGridLayout(self)
+
+    def set_automaton(self, automaton):
+        self._automaton = automaton
+        self.__clearLayout()
 
         for line in range(self._automaton.length):
             for cell in range(self._automaton.width):
                 self.__layout.addWidget(QLabel(self), line, cell)
-
-        self._button = QPushButton("Start", self)
-        self._button.clicked.connect(lambda: self.run(AutomatonRunner(1, 10)))
-        self.__layout.addWidget(self._button, line + 1, 0, -1, -1)
         self.draw()
 
+    @pyqtSlot(Automaton)
     def draw(self, automaton=None):
         """Callback for the AutomatonRunner."""
         if not automaton:
@@ -73,23 +79,37 @@ class QtVisualizer(QWidget):
                     f"QLabel {{ background-color : {grid[i][j].color} }}"
                 )
 
+    @pyqtSlot(AutomatonRunner)
     def run(self, automatonRunner):
+        self.__initialize_worker(automatonRunner)
+        # Start thread
+        self._thread.start()
+
+    @pyqtSlot()
+    def stop(self):
+        self._thread.exit(-1)
+
+    def __clearLayout(self):
+        while self.__layout.count():
+            item = self.__layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.setParent(None)
+                widget.deleteLater()
+
+    def __initialize_worker(self, automatonRunner):
         # Create thread environment
         self._thread = QThread(self)
         self._worker = QtVisualizerWorker(self._automaton, automatonRunner)
         self._worker.moveToThread(self._thread)
         # Connect everything
         self._thread.started.connect(self._worker.run)
-        self._thread.finished.connect(lambda: self._button.setEnabled(True))
+        self._worker.started.connect(self.started)
+        self._worker.finished.connect(self.finished)
+        self._worker.step_calculated.connect(self.step_calculated)
         self._worker.finished.connect(self._thread.quit)
         self._worker.finished.connect(self._worker.deleteLater)
         self._worker.step_calculated.connect(self.draw)
-        # Start thread
-        self._button.setEnabled(False)
-        self._thread.start()
-
-    def stop(self):
-        self._thread.exit(-1)
 
 
 if __name__ == "__main__":

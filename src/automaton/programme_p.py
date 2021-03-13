@@ -118,7 +118,7 @@ class GameOfFire(Automaton):
 
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication
-    from visualizer import QtVisualizer
+    from qtui import MainWindow
 
     app = QApplication([])
 
@@ -127,7 +127,7 @@ if __name__ == "__main__":
     # Initialize
     ca.random_initialize()
 
-    av = QtVisualizer(ca)
-
-    av.show()
+    m = MainWindow()
+    m.set_automaton(ca)
+    m.show()
     app.exec_()
