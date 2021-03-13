@@ -49,6 +49,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@main
 
+      # install X11 and other stuffs for Qt testing
+      - name: Install environment
+        run: |
+          sudo apt update
+          sudo apt install -y xvfb x11-utils libxkbcommon-x11-0
+          sudo apt clean
+
       # install python requirements
       - name: Install requirements
         run: |
@@ -57,7 +64,12 @@ jobs:
           pip install -r requirements-tests.txt
 
       - name: Run tests and coverage
-        run: PYTHONPATH=$PYTHONPATH:$(pwd)/src pytest --cache-clear --cov=src tests/ > pytest-coverage.txt
+        env:
+          QT_DEBUG_PLUGINS: 1
+        run: |
+          ulimit -c unlimited
+          cd src/
+          sudo catchsegv xvfb-run --auto-servernum pytest --cache-clear --cov=. ../tests/ > ../pytest-coverage.txt
 
       - name: Print test results
         if: ${{ always() }}
@@ -66,3 +78,13 @@ jobs:
       - name: Comment Coverage
         if: ${{ always() }}
         uses: coroo/pytest-coverage-commentator@main
+
+      - name: chmod
+        if: ${{ always() }}
+        run: sudo chmod -R a+rwx /var/crash
+      - name: Upload artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@master
+        with:
+          name: crashes
+          path: /var/crash
