@@ -1,4 +1,4 @@
-from qmaton import Automaton, State, VonNeumannNeighborhood
+from qmaton import Automaton, EdgeRule, State, VonNeumannNeighborhood
 
 """ ( MODELE :
 
@@ -56,7 +56,7 @@ class GameOfFire(Automaton):
             GameOfFire.ARBRE,
         ]
         self.rule = self.main_rule
-        self.neighborhood = VonNeumannNeighborhood()
+        self.neighborhood = VonNeumannNeighborhood(EdgeRule.IGNORE_MISSING_NEIGHBORS_OF_EDGE_CELLS, 1)
 
     def main_rule(self, x, y):
         if self.grid[x][y] == GameOfFire.VIDE:
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     app = QApplication([])
 
-    ca = GameOfFire(30, 30)
+    ca = GameOfFire(10, 10)
 
     # Initialize
     ca.random_initialize()
