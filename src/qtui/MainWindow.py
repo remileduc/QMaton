@@ -104,5 +104,8 @@ class MainWindow(QMainWindow):
     def _run_forward(self):
         if self.__is_running:
             return
-        else:
-            self.wautomaton.run(AutomatonRunner(1, 1))
+        self._automaton_started()
+        self._automaton.apply_rule()
+        self.wautomaton.draw()
+        self._automaton_step_calculated(self._automaton)
+        self._automaton_finished()
