@@ -20,8 +20,9 @@
 """Show the automaton in a UI window."""
 
 
-from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QGridLayout, QLabel, QWidget
+from PyQt5.QtCore import QObject, Qt, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QColor, QIcon, QPixmap
+from PyQt5.QtWidgets import QGridLayout, QLabel, QMenu, QWidget
 from qmaton import Automaton, AutomatonRunner
 
 
@@ -62,9 +63,15 @@ class QtVisualizer(QWidget):
         self._automaton = automaton
         self.__clearLayout()
 
+        label = None
         for line in range(self._automaton.length):
             for cell in range(self._automaton.width):
-                self.__layout.addWidget(QLabel(self), line, cell)
+                label = QLabel(self)
+                label.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+                label.customContextMenuRequested.connect(
+                    lambda pos, lbl=label, x=line, y=cell: self.__label_contextual_menu(lbl.mapToGlobal(pos), x, y)
+                )
+                self.__layout.addWidget(label, line, cell)
         self.draw()
 
     @pyqtSlot(Automaton)
@@ -75,9 +82,7 @@ class QtVisualizer(QWidget):
         grid = automaton.grid
         for i in range(automaton.length):
             for j in range(automaton.width):
-                self.__layout.itemAtPosition(i, j).widget().setStyleSheet(
-                    f"QLabel {{ background-color : {grid[i][j].color} }}"
-                )
+                self.__change_label_color(i, j, grid[i][j].color)
 
     @pyqtSlot(AutomatonRunner)
     def run(self, automatonRunner):
@@ -111,29 +116,34 @@ class QtVisualizer(QWidget):
         self._worker.finished.connect(self._worker.deleteLater)
         self._worker.step_calculated.connect(self.draw)
 
+    def __label_contextual_menu(self, pos, x, y):
+        if self._thread and self._thread.isRunning():
+            return
 
-if __name__ == "__main__":
-    from automaton import GameOfLife
-    from PyQt5.QtWidgets import QApplication
+        state = None
+        oldState = self._automaton.grid[x][y]
 
-    app = QApplication([])
+        def __set_state(newState):
+            nonlocal state
+            state = newState
 
-    ca = GameOfLife(7, 5)
+        # create menu
+        menu = QMenu(self)
+        for s in self._automaton.states:
+            pixmap = QPixmap(32, 32)
+            pixmap.fill(QColor(s.color))
+            action = menu.addAction(QIcon(pixmap), s.name)
+            action.triggered.connect(lambda _, newState=s: __set_state(newState))
+            if s == oldState:
+                font = action.font()
+                font.setBold(True)
+                action.setFont(font)
+        # show menu
+        menu.exec(pos)
+        # change state if a new one has been selected
+        if state is not None and state != oldState:
+            self._automaton.grid[x][y] = state
+            self.__change_label_color(x, y, state.color)
 
-    # Initialize
-    # ca.random_initialize()
-    ca.grid[1][1] = GameOfLife.LIFE
-    ca.grid[1][2] = GameOfLife.LIFE
-    ca.grid[2][1] = GameOfLife.LIFE
-    ca.grid[2][2] = GameOfLife.LIFE
-    ca.grid[4][1] = GameOfLife.LIFE
-    ca.grid[4][2] = GameOfLife.LIFE
-    ca.grid[5][4] = GameOfLife.LIFE
-    ca.grid[6][0] = GameOfLife.LIFE
-    ca.grid[6][3] = GameOfLife.LIFE
-    ca.grid[6][4] = GameOfLife.LIFE
-
-    av = QtVisualizer(ca)
-
-    av.show()
-    app.exec_()
+    def __change_label_color(self, x, y, color):
+        self.__layout.itemAtPosition(x, y).widget().setStyleSheet(f"QLabel {{ background-color : {color} }}")
