@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 #    QMaton is a Python/Qt software used to run cellular automatons.
@@ -17,23 +16,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""Main entry for QMaton.
+# flake8: noqa
 
-Launch the automaton. You can change the automaton and the visulaizer used below.
-"""
+"""QMaton UI module."""
 
 
-from automaton import GameOfLife
-from PyQt5.QtWidgets import QApplication
-from qtui import MainWindow
-
-if __name__ == "__main__":
-    app = QApplication([])
-
-    gol = GameOfLife(10, 10)
-    gol.random_initialize()
-
-    m = MainWindow()
-    m.set_automaton(gol)
-    m.show()
-    app.exec_()
+from .MainWindow import *

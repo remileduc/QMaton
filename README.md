@@ -1,5 +1,5 @@
 # QMaton
-[![GitHub Super-Linter](https://github.com/remileduc/QMaton/actions/workflows/ci.yaml/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![Generic CI](https://github.com/remileduc/QMaton/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/remileduc/QMaton/actions/workflows/ci.yaml?query=branch%3Amain)
 
 Cellular automaton easily customizable, with a fully functional UI interface (based on Qt)
 
