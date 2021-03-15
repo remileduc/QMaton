@@ -42,8 +42,12 @@ class MainWindow(QMainWindow):
         self.__is_running = False
 
     def set_automaton(self, automaton):
+        self.__enable_ui(False)
         self._automaton = automaton
         self.wautomaton.set_automaton(self._automaton)
+        self.spLength.setValue(self._automaton.length)
+        self.spWidth.setValue(self._automaton.width)
+        self.__enable_ui(True)
 
     # Automaton slots
 
@@ -105,9 +109,22 @@ class MainWindow(QMainWindow):
         if not self.__is_running:
             self.__is_running = True
             self.btnPlay.setIcon(QIcon(":/media/pause"))
-            self.wautomaton.run(AutomatonRunner(10, 10))
+            self.wautomaton.run(AutomatonRunner(10, self.spIPS.value()))
         else:
             self.wautomaton.stop()
+
+    @pyqtSlot()
+    def _run_backward(self):
+        pass
+
+    # Settings slots
+
+    @pyqtSlot()
+    def _settings_validated(self):
+        length = self.spLength.value()
+        width = self.spWidth.value()
+        if self._automaton.grid_size != (length, width):
+            self.set_automaton(type(self._automaton)(length, width))
 
     @pyqtSlot()
     def _run_forward(self):
