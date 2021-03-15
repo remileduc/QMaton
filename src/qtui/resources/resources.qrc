@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="actions">
+    <file alias="clear">edit-clear.svg</file>
     <file alias="randomize">distribute-randomize.svg</file>
     <file alias="reset">edit-reset.svg</file>
     <file alias="close">window-close.svg</file>

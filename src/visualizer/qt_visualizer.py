@@ -67,7 +67,7 @@ class QtVisualizer(QWidget):
         for line in range(self._automaton.length):
             for cell in range(self._automaton.width):
                 label = QLabel(self)
-                label.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+                label.setContextMenuPolicy(Qt.CustomContextMenu)
                 label.customContextMenuRequested.connect(
                     lambda pos, lbl=label, x=line, y=cell: self.__label_contextual_menu(lbl.mapToGlobal(pos), x, y)
                 )

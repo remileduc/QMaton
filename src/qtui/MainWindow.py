@@ -87,7 +87,14 @@ class MainWindow(QMainWindow):
         if not self._automaton:
             return
         self._automaton.random_initialize()
-        self.wautomaton.draw()
+        self.__draw_automaton()
+
+    @pyqtSlot()
+    def _clear_grid(self):
+        if not self._automaton:
+            return
+        self._automaton.clear_grid()
+        self.__draw_automaton()
 
     # Media slots
 
@@ -106,6 +113,10 @@ class MainWindow(QMainWindow):
             return
         self._automaton_started()
         self._automaton.apply_rule()
+        self.__draw_automaton()
+
+    def __draw_automaton(self):
+        self._automaton_started()
         self.wautomaton.draw()
         self._automaton_step_calculated(self._automaton)
         self._automaton_finished()

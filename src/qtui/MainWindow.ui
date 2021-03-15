@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>404</width>
-    <height>386</height>
+    <width>515</width>
+    <height>430</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -190,23 +190,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="btnStop">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="toolTip">
-         <string>Stop automaton</string>
-        </property>
-        <property name="text">
-         <string>Stop</string>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/resources.qrc">
-          <normaloff>:/media/stop</normaloff>:/media/stop</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QToolButton" name="btnForward">
         <property name="toolTip">
          <string>One step forward</string>
@@ -255,8 +238,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>404</width>
-     <height>26</height>
+     <width>515</width>
+     <height>38</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -274,6 +257,7 @@
     </property>
     <addaction name="actionReset"/>
     <addaction name="actionRandomizeGrid"/>
+    <addaction name="actionClear"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -304,6 +288,7 @@
    </attribute>
    <addaction name="actionReset"/>
    <addaction name="actionRandomizeGrid"/>
+   <addaction name="actionClear"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -374,6 +359,18 @@
     <string>Reinitialize the grid with random statuses</string>
    </property>
   </action>
+  <action name="actionClear">
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/actions/clear</normaloff>:/actions/clear</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Clear</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear the automaton</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -399,7 +396,6 @@
   <tabstop>btnValidateSettings</tabstop>
   <tabstop>btnPlay</tabstop>
   <tabstop>btnBack</tabstop>
-  <tabstop>btnStop</tabstop>
   <tabstop>btnForward</tabstop>
   <tabstop>slider</tabstop>
  </tabstops>
@@ -510,12 +506,12 @@
    <slot>_automaton_started()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>414</y>
+     <x>276</x>
+     <y>267</y>
     </hint>
     <hint type="destinationlabel">
      <x>263</x>
-     <y>509</y>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -526,12 +522,12 @@
    <slot>_automaton_finished()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>561</x>
-     <y>432</y>
+     <x>496</x>
+     <y>267</y>
     </hint>
     <hint type="destinationlabel">
-     <x>561</x>
-     <y>493</y>
+     <x>514</x>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -542,12 +538,12 @@
    <slot>_automaton_step_calculated()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>667</x>
-     <y>403</y>
+     <x>496</x>
+     <y>267</y>
     </hint>
     <hint type="destinationlabel">
-     <x>667</x>
-     <y>540</y>
+     <x>514</x>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -558,12 +554,12 @@
    <slot>_start_pause_automaton()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>39</x>
-     <y>571</y>
+     <x>58</x>
+     <y>334</y>
     </hint>
     <hint type="destinationlabel">
      <x>39</x>
-     <y>521</y>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -574,12 +570,28 @@
    <slot>_run_forward()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>171</x>
-     <y>577</y>
+     <x>190</x>
+     <y>326</y>
     </hint>
     <hint type="destinationlabel">
      <x>175</x>
-     <y>635</y>
+     <y>429</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionClear</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>_clear_grid()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>257</x>
+     <y>214</y>
     </hint>
    </hints>
   </connection>
@@ -594,5 +606,6 @@
   <slot>_automaton_step_calculated()</slot>
   <slot>_start_pause_automaton()</slot>
   <slot>_run_forward()</slot>
+  <slot>_clear_grid()</slot>
  </slots>
 </ui>

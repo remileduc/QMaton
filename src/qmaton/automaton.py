@@ -90,6 +90,10 @@ class Automaton:
     def width(self):
         return self.__grid_size[1]
 
+    def clear_grid(self):
+        """Reset the grid with the default value in all cells."""
+        self.grid = self.__init_grid()
+
     def random_initialize(self):
         """Initialize each cell of the grid with a random State from the list of states."""
         import random
