@@ -22,7 +22,7 @@
 
 from time import sleep, time
 
-from qmaton import Automaton, AutomatonRunner, State
+from qmaton import Automaton, AutomatonHistory, AutomatonRunner, State
 
 
 class DumbAutomaton(Automaton):
@@ -51,6 +51,9 @@ def test_init():
     ar = AutomatonRunner(6, 3)
     assert ar.nb_iter == 6
     assert ar.sleep_time == 1 / 3
+    assert ar.history is None
+    ar = AutomatonRunner(history=AutomatonHistory())
+    assert ar.history is not None
 
 
 def test_launch():
@@ -66,6 +69,16 @@ def test_launch():
     assert dab.callback_cpt == 6
     assert total_time > 0.5  # 12 operations per seconds, we do 6, so 0.5 seconds
     assert total_time < 0.6
+
+
+def test_launch_with_history():
+    ah = AutomatonHistory()
+    dab = DumbAutomaton(2, 3)
+    ar = AutomatonRunner(1, 100, ah)
+
+    ar.launch(dab, dab.callback)
+
+    assert len(ah) == 2
 
 
 def test_launch_too_long(capsys):

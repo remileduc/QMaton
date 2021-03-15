@@ -77,6 +77,8 @@ class Automaton:
     def __eq__(self, other):
         return self.states == other.states and self.grid == other.grid
 
+    # Properties
+
     @property
     def grid_size(self):
         """Return the size of the grid in a tuple (length, width)."""
@@ -89,6 +91,8 @@ class Automaton:
     @property
     def width(self):
         return self.__grid_size[1]
+
+    # Grid management
 
     def clear_grid(self):
         """Reset the grid with the default value in all cells."""
@@ -104,6 +108,8 @@ class Automaton:
                 [self.states[random.randrange(len(self.states))] for _ in range(self.width)] for _ in range(self.length)
             ]
 
+    # Run automaton
+
     def apply_rule(self):
         """Calculate an iteration of the cellular automaton.
 
@@ -115,6 +121,8 @@ class Automaton:
             for j in range(self.width):
                 new_grid[i][j] = self.rule(i, j)
         self.grid = new_grid
+
+    # Neighborhood utils
 
     def is_on_edge(self, x, y, radius=1):
         """Tell if the cell in the coordinates (x, y) is on the edge of the grid
@@ -138,6 +146,8 @@ class Automaton:
         neighbors = neighborhood.get_neighbors_coordinates((x, y), self.grid_size)
         return sum(1 for n in neighbors if self.grid[n[0]][n[1]] in states)
 
+    # Serialization
+
     def toJSON(self):
         """Return a JSON string representation of the automaton."""
         import json
@@ -157,6 +167,8 @@ class Automaton:
         automaton = cls(o["grid_size"][0], o["grid_size"][1])
         automaton.grid = o["grid"]
         return automaton
+
+    # Private methods
 
     def __init_grid(self):
         return [[self.__default_value for _ in range(self.width)] for _ in range(self.length)]

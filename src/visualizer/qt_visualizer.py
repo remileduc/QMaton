@@ -74,6 +74,8 @@ class QtVisualizer(QWidget):
                 self.__layout.addWidget(label, line, cell)
         self.draw()
 
+    # Slots
+
     @pyqtSlot(Automaton)
     def draw(self, automaton=None):
         """Callback for the AutomatonRunner."""
@@ -93,6 +95,8 @@ class QtVisualizer(QWidget):
     @pyqtSlot()
     def stop(self):
         self._thread.exit(-1)
+
+    # Private methods
 
     def __clearLayout(self):
         while self.__layout.count():
