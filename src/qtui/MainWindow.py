@@ -50,10 +50,12 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def _automaton_started(self):
         self.__is_running = True
+        self.__enable_ui(False)
 
     @pyqtSlot()
     def _automaton_finished(self):
         self.__is_running = False
+        self.__enable_ui(True)
         self.btnPlay.setIcon(QIcon(":/media/play"))
 
     @pyqtSlot(Automaton)
@@ -120,3 +122,17 @@ class MainWindow(QMainWindow):
         self.wautomaton.draw()
         self._automaton_step_calculated(self._automaton)
         self._automaton_finished()
+
+    def __enable_ui(self, enabled):
+        # actions file
+        self.actionOpen.setEnabled(enabled)
+        self.actionSave.setEnabled(enabled)
+        # actions edit
+        self.actionReset.setEnabled(enabled)
+        self.actionRandomizeGrid.setEnabled(enabled)
+        self.actionClear.setEnabled(enabled)
+        # settings
+        self.settingsWidget.setEnabled(enabled)
+        # media buttons
+        self.btnBack.setEnabled(enabled)
+        self.btnForward.setEnabled(enabled)
