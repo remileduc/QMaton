@@ -25,7 +25,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QMainWindow
 from PyQt5.uic import loadUi
-from qmaton import Automaton, AutomatonRunner
+from qmaton import Automaton, AutomatonHistory, AutomatonRunner
 from qtui import resources  # noqa: F401
 
 
@@ -38,16 +38,21 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         loadUi(path.join(path.dirname(__file__), "MainWindow.ui"), self)
+        self._history = AutomatonHistory()
         self._automaton = None
         self.__is_running = False
 
+        # set media buttons
+        self.btnPlay.setDefaultAction(self.actionPlayPause)
+        self.btnBack.setDefaultAction(self.actionBack)
+        self.btnForward.setDefaultAction(self.actionForward)
+
     def set_automaton(self, automaton):
-        self.__enable_ui(False)
         self._automaton = automaton
         self.wautomaton.set_automaton(self._automaton)
+        self.__clear_history()
         self.spLength.setValue(self._automaton.length)
         self.spWidth.setValue(self._automaton.width)
-        self.__enable_ui(True)
 
     # Automaton slots
 
@@ -55,16 +60,17 @@ class MainWindow(QMainWindow):
     def _automaton_started(self):
         self.__is_running = True
         self.__enable_ui(False)
+        self.actionPlayPause.setIcon(QIcon(":/media/pause"))
 
     @pyqtSlot()
     def _automaton_finished(self):
         self.__is_running = False
         self.__enable_ui(True)
-        self.btnPlay.setIcon(QIcon(":/media/play"))
+        self.actionPlayPause.setIcon(QIcon(":/media/play"))
 
     @pyqtSlot(Automaton)
     def _automaton_step_calculated(self, automaton):
-        pass
+        self.__updateSlider()
 
     # Menu slots
 
@@ -86,36 +92,59 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def _reset_grid(self):
-        pass
+        self._automaton_started()
+        self._automaton.grid = self._history.move_to(0)
+        self.__clear_history()
+        self.__draw_automaton()
 
     @pyqtSlot()
     def _randomize_grid(self):
-        if not self._automaton:
-            return
+        self._automaton_started()
         self._automaton.random_initialize()
+        self.__clear_history()
         self.__draw_automaton()
 
     @pyqtSlot()
     def _clear_grid(self):
-        if not self._automaton:
-            return
+        self._automaton_started()
         self._automaton.clear_grid()
+        self.__clear_history()
         self.__draw_automaton()
 
     # Media slots
 
     @pyqtSlot()
     def _start_pause_automaton(self):
-        if not self.__is_running:
-            self.__is_running = True
-            self.btnPlay.setIcon(QIcon(":/media/pause"))
-            self.wautomaton.run(AutomatonRunner(10, self.spIPS.value()))
-        else:
+        if self.__is_running:
             self.wautomaton.stop()
+        else:
+            self._automaton_started()
+            self.wautomaton.run(AutomatonRunner(10, self.spIPS.value(), history=self._history))
 
     @pyqtSlot()
     def _run_backward(self):
-        pass
+        if self._history.current_index > 0:
+            self._automaton_started()
+            self._automaton.grid = self._history.move_backward()
+            self.__updateSlider()
+            self.__draw_automaton()
+
+    @pyqtSlot()
+    def _run_forward(self):
+        self._automaton_started()
+        if not self._history.remaining_steps:
+            self.wautomaton.run_seq(AutomatonRunner(1, history=self._history))
+        else:
+            self._automaton.grid = self._history.move_forward()
+            self.__updateSlider()
+            self.__draw_automaton()
+
+    @pyqtSlot(int)
+    def _set_step(self, step):
+        self._automaton_started()
+        self._automaton.grid = self._history.move_to(step)
+        self.__updateSlider()
+        self.__draw_automaton()
 
     # Settings slots
 
@@ -126,30 +155,38 @@ class MainWindow(QMainWindow):
         if self._automaton.grid_size != (length, width):
             self.set_automaton(type(self._automaton)(length, width))
 
-    @pyqtSlot()
-    def _run_forward(self):
-        if self.__is_running:
-            return
-        self._automaton_started()
-        self._automaton.apply_rule()
-        self.__draw_automaton()
+    # Private methods
 
     def __draw_automaton(self):
         self._automaton_started()
         self.wautomaton.draw()
-        self._automaton_step_calculated(self._automaton)
         self._automaton_finished()
+
+    def __clear_history(self):
+        self._history.clear()
+        self.__updateSlider()
 
     def __enable_ui(self, enabled):
         # actions file
         self.actionOpen.setEnabled(enabled)
         self.actionSave.setEnabled(enabled)
         # actions edit
-        self.actionReset.setEnabled(enabled)
+        self.actionReset.setEnabled(self._history.current_index > 0 if enabled else False)
         self.actionRandomizeGrid.setEnabled(enabled)
         self.actionClear.setEnabled(enabled)
         # settings
         self.settingsWidget.setEnabled(enabled)
         # media buttons
-        self.btnBack.setEnabled(enabled)
-        self.btnForward.setEnabled(enabled)
+        self.actionForward.setEnabled(enabled)
+        self.actionBack.setEnabled(self._history.current_index > 0 if enabled else False)
+        self.timeSlider.setEnabled(enabled)
+
+    def __updateSlider(self):
+        timemax = max(0, len(self._history) - 1)
+        tumecur = max(0, self._history.current_index)
+
+        self.timeSlider.blockSignals(True)
+        self.timeSlider.setMaximum(timemax)
+        self.timeSlider.setValue(tumecur)
+        self.timeSlider.blockSignals(False)
+        self.lblTime.setText(f"({tumecur} / {timemax}) ")
