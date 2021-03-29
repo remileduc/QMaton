@@ -26,7 +26,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QMainWindow
 from PyQt5.uic import loadUi
 from qmaton import Automaton, AutomatonHistory, AutomatonRunner
-from qtui import resources  # noqa: F401
+from qtui import resources, settings  # noqa: F401
 
 
 class MainWindow(QMainWindow):
@@ -35,11 +35,12 @@ class MainWindow(QMainWindow):
     This is using the MainWindow.ui file. Note that most of the Qt connections are done in the UI file.
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, automaton_type, parent=None):
         super().__init__(parent)
         loadUi(path.join(path.dirname(__file__), "MainWindow.ui"), self)
         self._history = AutomatonHistory()
         self._automaton = None
+        self._automaton_type = automaton_type
         self.__is_running = False
 
         # set media buttons
@@ -47,8 +48,12 @@ class MainWindow(QMainWindow):
         self.btnBack.setDefaultAction(self.actionBack)
         self.btnForward.setDefaultAction(self.actionForward)
 
+        # restore preferences
+        settings.restore_settings(self)
+
     def set_automaton(self, automaton):
         self._automaton = automaton
+        self._automaton_type = type(automaton)
         self.wautomaton.set_automaton(self._automaton)
         self.__clear_history()
         self.spLength.setValue(self._automaton.length)
@@ -76,19 +81,25 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def _open_file(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Select open file", "automaton", "JSON Automaton (*.json)")
+        filename, _ = QFileDialog.getOpenFileName(
+            self, "Select open file", settings.save_path, "JSON Automaton (*.json)"
+        )
         if not filename:
             return
         with open(filename, "r") as file:
-            self.set_automaton(type(self._automaton).fromJSON(file.read()))
+            self.set_automaton(self._automaton_type.fromJSON(file.read()))
+        settings.save_path = filename
 
     @pyqtSlot()
     def _save_file(self):
-        filename, _ = QFileDialog.getSaveFileName(self, "Select save file", "automaton", "JSON Automaton (*.json)")
+        filename, _ = QFileDialog.getSaveFileName(
+            self, "Select save file", settings.save_path, "JSON Automaton (*.json)"
+        )
         if not filename:
             return
         with open(filename, "w") as file:
             file.write(self._automaton.toJSON())
+        settings.save_path = filename
 
     @pyqtSlot()
     def _reset_grid(self):
@@ -153,7 +164,13 @@ class MainWindow(QMainWindow):
         length = self.spLength.value()
         width = self.spWidth.value()
         if self._automaton.grid_size != (length, width):
-            self.set_automaton(type(self._automaton)(length, width))
+            self.set_automaton(self._automaton_type(length, width))
+
+    # Override
+
+    def closeEvent(self, event):
+        settings.save_settings(self)
+        super().closeEvent(event)
 
     # Private methods
 
