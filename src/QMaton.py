@@ -19,7 +19,7 @@
 
 """Main entry for QMaton.
 
-Launch the automaton. You can change the automaton and the visulaizer used below.
+Launch the automaton. You can change the automaton and the visualizer used below.
 """
 
 

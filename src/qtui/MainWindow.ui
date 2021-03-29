@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>404</width>
-    <height>386</height>
+    <width>566</width>
+    <height>412</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,32 +46,48 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QWidget" name="widget" native="true">
+        <widget class="QWidget" name="settingsWidget" native="true">
          <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Grid size:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spLength</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Animation:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spIPS</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="0" column="2">
            <widget class="QLabel" name="label_2">
             <property name="text">
              <string>x</string>
             </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QSpinBox" name="spWidth">
-            <property name="suffix">
-             <string> (width)</string>
-            </property>
-            <property name="maximum">
-             <number>40</number>
-            </property>
-            <property name="value">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Grid size:</string>
+            <property name="buddy">
+             <cstring>spWidth</cstring>
             </property>
            </widget>
           </item>
@@ -88,25 +104,34 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Animation:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBox</cstring>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1" colspan="3">
-           <widget class="QSpinBox" name="spinBox">
+           <widget class="QSpinBox" name="spIPS">
             <property name="suffix">
              <string> images / second</string>
             </property>
+            <property name="maximum">
+             <number>60</number>
+            </property>
+            <property name="value">
+             <number>10</number>
+            </property>
            </widget>
           </item>
-          <item row="1" column="4">
-           <widget class="QToolButton" name="btnValidateSettings">
+          <item row="0" column="3">
+           <widget class="QSpinBox" name="spWidth">
+            <property name="suffix">
+             <string> (width)</string>
+            </property>
+            <property name="maximum">
+             <number>40</number>
+            </property>
+            <property name="value">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QPushButton" name="btnValidateSettings">
             <property name="toolTip">
              <string>Validate settings</string>
             </property>
@@ -123,20 +148,10 @@
               <height>16</height>
              </size>
             </property>
+            <property name="default">
+             <bool>true</bool>
+            </property>
            </widget>
-          </item>
-          <item row="0" column="4">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </widget>
@@ -154,12 +169,6 @@
       </property>
       <item>
        <widget class="QToolButton" name="btnPlay">
-        <property name="toolTip">
-         <string>Play / Pause automaton</string>
-        </property>
-        <property name="text">
-         <string>Play / Pause</string>
-        </property>
         <property name="icon">
          <iconset resource="resources/resources.qrc">
           <normaloff>:/media/play</normaloff>:/media/play</iconset>
@@ -177,12 +186,6 @@
         <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip">
-         <string>One step backward</string>
-        </property>
-        <property name="text">
-         <string>One step back</string>
-        </property>
         <property name="icon">
          <iconset resource="resources/resources.qrc">
           <normaloff>:/media/backward</normaloff>:/media/backward</iconset>
@@ -190,30 +193,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="btnStop">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="toolTip">
-         <string>Stop automaton</string>
-        </property>
-        <property name="text">
-         <string>Stop</string>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/resources.qrc">
-          <normaloff>:/media/stop</normaloff>:/media/stop</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QToolButton" name="btnForward">
-        <property name="toolTip">
-         <string>One step forward</string>
-        </property>
-        <property name="text">
-         <string>One step forward</string>
-        </property>
         <property name="icon">
          <iconset resource="resources/resources.qrc">
           <normaloff>:/media/forward</normaloff>:/media/forward</iconset>
@@ -236,17 +216,34 @@
      </layout>
     </item>
     <item>
-     <widget class="QSlider" name="slider">
-      <property name="minimum">
-       <number>1</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="tickPosition">
-       <enum>QSlider::TicksBelow</enum>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QSlider" name="timeSlider">
+        <property name="maximum">
+         <number>0</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBelow</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lblTime">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>(0 / 0) </string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -255,7 +252,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>404</width>
+     <width>566</width>
      <height>26</height>
     </rect>
    </property>
@@ -274,9 +271,19 @@
     </property>
     <addaction name="actionReset"/>
     <addaction name="actionRandomizeGrid"/>
+    <addaction name="actionClear"/>
+   </widget>
+   <widget class="QMenu" name="menuMedia">
+    <property name="title">
+     <string>&amp;Media</string>
+    </property>
+    <addaction name="actionPlayPause"/>
+    <addaction name="actionBack"/>
+    <addaction name="actionForward"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
+   <addaction name="menuMedia"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="fileToolBar">
@@ -304,6 +311,7 @@
    </attribute>
    <addaction name="actionReset"/>
    <addaction name="actionRandomizeGrid"/>
+   <addaction name="actionClear"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -374,6 +382,69 @@
     <string>Reinitialize the grid with random statuses</string>
    </property>
   </action>
+  <action name="actionClear">
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/actions/clear</normaloff>:/actions/clear</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Clear</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear the automaton</string>
+   </property>
+   <property name="shortcut">
+    <string>Backspace</string>
+   </property>
+  </action>
+  <action name="actionPlayPause">
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/media/play</normaloff>:/media/play</iconset>
+   </property>
+   <property name="text">
+    <string>Play / Pause</string>
+   </property>
+   <property name="toolTip">
+    <string>Play / Pause automaton</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
+  </action>
+  <action name="actionBack">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/media/backward</normaloff>:/media/backward</iconset>
+   </property>
+   <property name="text">
+    <string>Back</string>
+   </property>
+   <property name="toolTip">
+    <string>One step backward</string>
+   </property>
+   <property name="shortcut">
+    <string>Left</string>
+   </property>
+  </action>
+  <action name="actionForward">
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/media/forward</normaloff>:/media/forward</iconset>
+   </property>
+   <property name="text">
+    <string>Forward</string>
+   </property>
+   <property name="toolTip">
+    <string>One step forward</string>
+   </property>
+   <property name="shortcut">
+    <string>Right</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -395,13 +466,11 @@
   <tabstop>groupBox</tabstop>
   <tabstop>spLength</tabstop>
   <tabstop>spWidth</tabstop>
-  <tabstop>spinBox</tabstop>
   <tabstop>btnValidateSettings</tabstop>
+  <tabstop>spIPS</tabstop>
   <tabstop>btnPlay</tabstop>
   <tabstop>btnBack</tabstop>
-  <tabstop>btnStop</tabstop>
   <tabstop>btnForward</tabstop>
-  <tabstop>slider</tabstop>
  </tabstops>
  <resources>
   <include location="resources/resources.qrc"/>
@@ -490,7 +559,7 @@
   <connection>
    <sender>groupBox</sender>
    <signal>toggled(bool)</signal>
-   <receiver>widget</receiver>
+   <receiver>settingsWidget</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -510,12 +579,12 @@
    <slot>_automaton_started()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>414</y>
+     <x>276</x>
+     <y>289</y>
     </hint>
     <hint type="destinationlabel">
      <x>263</x>
-     <y>509</y>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -526,12 +595,12 @@
    <slot>_automaton_finished()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>561</x>
-     <y>432</y>
+     <x>496</x>
+     <y>289</y>
     </hint>
     <hint type="destinationlabel">
-     <x>561</x>
-     <y>493</y>
+     <x>514</x>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -542,44 +611,108 @@
    <slot>_automaton_step_calculated()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>667</x>
-     <y>403</y>
+     <x>496</x>
+     <y>289</y>
     </hint>
     <hint type="destinationlabel">
-     <x>667</x>
-     <y>540</y>
+     <x>514</x>
+     <y>429</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>btnPlay</sender>
+   <sender>actionClear</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>_clear_grid()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>257</x>
+     <y>214</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnValidateSettings</sender>
    <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>_settings_validated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>493</x>
+     <y>173</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>7</x>
+     <y>230</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>_set_step(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>351</x>
+     <y>371</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>381</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionPlayPause</sender>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>_start_pause_automaton()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>39</x>
-     <y>571</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>39</x>
-     <y>521</y>
+     <x>346</x>
+     <y>226</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>btnForward</sender>
-   <signal>clicked()</signal>
+   <sender>actionBack</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>_run_backward()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>346</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionForward</sender>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>_run_forward()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>171</x>
-     <y>577</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>175</x>
-     <y>635</y>
+     <x>346</x>
+     <y>226</y>
     </hint>
    </hints>
   </connection>
@@ -594,5 +727,9 @@
   <slot>_automaton_step_calculated()</slot>
   <slot>_start_pause_automaton()</slot>
   <slot>_run_forward()</slot>
+  <slot>_clear_grid()</slot>
+  <slot>_run_backward()</slot>
+  <slot>_settings_validated()</slot>
+  <slot>_set_step(int)</slot>
  </slots>
 </ui>

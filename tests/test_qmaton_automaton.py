@@ -63,6 +63,15 @@ def test_eq():
     assert dab == dab2
 
 
+def test_clear_grid():
+    dab = DumbAutomaton(2, 3)
+    assert all(s is DumbAutomaton.STATE for line in dab.grid for s in line)
+    dab.grid = [[None for _ in line] for line in dab.grid]
+    assert all(s is None for line in dab.grid for s in line)
+    dab.clear_grid()
+    assert all(s is DumbAutomaton.STATE for line in dab.grid for s in line)
+
+
 def test_random_initialize():
     dab = DumbAutomaton(2, 3)
     assert all(s is DumbAutomaton.STATE for line in dab.grid for s in line)

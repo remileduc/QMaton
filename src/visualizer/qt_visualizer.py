@@ -60,6 +60,12 @@ class QtVisualizer(QWidget):
         self.__layout = QGridLayout(self)
 
     def set_automaton(self, automaton):
+        """Reset the widget to show the given automaton.
+
+        In case the automaton is the same but you just want to update the widget, you should call the draw()
+        method instead.
+        """
+        self.started.emit()
         self._automaton = automaton
         self.__clearLayout()
 
@@ -67,12 +73,15 @@ class QtVisualizer(QWidget):
         for line in range(self._automaton.length):
             for cell in range(self._automaton.width):
                 label = QLabel(self)
-                label.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+                label.setContextMenuPolicy(Qt.CustomContextMenu)
                 label.customContextMenuRequested.connect(
                     lambda pos, lbl=label, x=line, y=cell: self.__label_contextual_menu(lbl.mapToGlobal(pos), x, y)
                 )
                 self.__layout.addWidget(label, line, cell)
         self.draw()
+        self.finished.emit()
+
+    # Slots
 
     @pyqtSlot(Automaton)
     def draw(self, automaton=None):
@@ -86,13 +95,24 @@ class QtVisualizer(QWidget):
 
     @pyqtSlot(AutomatonRunner)
     def run(self, automatonRunner):
+        """Run the automaton through the given AutomatonRunner in a separate thread."""
         self.__initialize_worker(automatonRunner)
+        self.__initialize_thread()
         # Start thread
         self._thread.start()
+
+    @pyqtSlot(AutomatonRunner)
+    def run_seq(self, automatonRunner):
+        """Run the automaton through the given AutomatonRunner in the current thread (sequentially)."""
+        self.__initialize_worker(automatonRunner)
+        # Start runner
+        self._worker.run()
 
     @pyqtSlot()
     def stop(self):
         self._thread.exit(-1)
+
+    # Private methods
 
     def __clearLayout(self):
         while self.__layout.count():
@@ -104,17 +124,21 @@ class QtVisualizer(QWidget):
 
     def __initialize_worker(self, automatonRunner):
         # Create thread environment
-        self._thread = QThread(self)
         self._worker = QtVisualizerWorker(self._automaton, automatonRunner)
-        self._worker.moveToThread(self._thread)
         # Connect everything
-        self._thread.started.connect(self._worker.run)
         self._worker.started.connect(self.started)
         self._worker.finished.connect(self.finished)
         self._worker.step_calculated.connect(self.step_calculated)
-        self._worker.finished.connect(self._thread.quit)
         self._worker.finished.connect(self._worker.deleteLater)
         self._worker.step_calculated.connect(self.draw)
+
+    def __initialize_thread(self):
+        # Create thread environment
+        self._thread = QThread(self)
+        self._worker.moveToThread(self._thread)
+        # Connect everything
+        self._thread.started.connect(self._worker.run)
+        self._worker.finished.connect(self._thread.quit)
 
     def __label_contextual_menu(self, pos, x, y):
         if self._thread and self._thread.isRunning():

@@ -31,9 +31,10 @@ class AutomatonRunner:
     Attributes:
         sleep_time the number of ms between each iteration
         nb_iter the number of iterations to do
+        history the history manager to update
     """
 
-    def __init__(self, nb_iter=100, iter_per_second=10):
+    def __init__(self, nb_iter=100, iter_per_second=10, history=None):
         """Constructor
 
         :param int nb_iter: the number of iterations to realize
@@ -41,6 +42,7 @@ class AutomatonRunner:
         """
         self.sleep_time = 1 / iter_per_second
         self.nb_iter = nb_iter
+        self.history = history
         self.__stop = False
 
     def stop(self):
@@ -62,9 +64,13 @@ class AutomatonRunner:
         i = 0
         while not self.__stop and i < self.nb_iter:
             time_before = time()
+            if self.history is not None and not self.history:  # history is empty
+                self.history.append_automaton_state(automaton)
 
             automaton.apply_rule()
-            if callback:
+            if self.history is not None:
+                self.history.append_automaton_state(automaton)
+            if callback is not None:
                 callback(automaton)
 
             to_sleep = self.sleep_time - time() + time_before
