@@ -30,10 +30,11 @@ from qtui import MainWindow
 if __name__ == "__main__":
     app = QApplication([])
 
-    gol = GameOfLife(10, 10)
-    gol.random_initialize()
+    m = MainWindow(GameOfLife)
+    if m._automaton is None:
+        gol = GameOfLife(10, 10)
+        gol.random_initialize()
+        m.set_automaton(gol)
 
-    m = MainWindow()
-    m.set_automaton(gol)
     m.show()
     app.exec_()

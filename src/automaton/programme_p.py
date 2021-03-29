@@ -122,12 +122,12 @@ if __name__ == "__main__":
 
     app = QApplication([])
 
-    ca = GameOfFire(10, 10)
-
     # Initialize
-    ca.random_initialize()
+    m = MainWindow(GameOfFire)
+    if m._automaton is None:
+        ca = GameOfFire(10, 10)
+        ca.random_initialize()
+        m.set_automaton(ca)
 
-    m = MainWindow()
-    m.set_automaton(ca)
     m.show()
     app.exec_()
