@@ -28,8 +28,15 @@ This module contains all the logic for running a cellular automaton:
 """
 
 
-from .automaton import *
-from .automaton_history import *
-from .automaton_runner import *
-from .automaton_serializer import *
-from .neighborhood import *
+from .automaton import Automaton, State
+from .automaton_history import AutomatonHistory
+from .automaton_runner import AutomatonRunner
+from .automaton_serializer import AutomatonSerializer
+from .neighborhood import (
+    EdgeRule,
+    HexagonalNeighborhood,
+    MooreNeighborhood,
+    Neighborhood,
+    RadialNeighborhood,
+    VonNeumannNeighborhood,
+)

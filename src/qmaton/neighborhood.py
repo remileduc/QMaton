@@ -30,6 +30,10 @@ import enum
 import itertools
 import math
 import operator
+from typing import Iterator, Tuple
+
+Coordinate = Tuple[int, int]
+"""The grid of an automaton."""
 
 
 class EdgeRule(enum.Enum):
@@ -51,7 +55,7 @@ class Neighborhood:
     """
 
     @staticmethod
-    def is_on_edge(coordinate, grid_size, radius):
+    def is_on_edge(coordinate: Coordinate, grid_size: Coordinate, radius: int) -> bool:
         """Tell if the cell in the coordinates (x, y) is on the edge of the grid
 
         :param tuple coordinate: the coordinates of the cell (x, y)
@@ -60,18 +64,18 @@ class Neighborhood:
         """
         return any(not (radius - 1 < ci < di - radius) for ci, di in zip(coordinate, grid_size))
 
-    def __init__(self, edge_rule=EdgeRule.IGNORE_EDGE_CELLS, radius=1):
+    def __init__(self, edge_rule: EdgeRule = EdgeRule.IGNORE_EDGE_CELLS, radius: int = 1):
         """General class for all Neighborhoods.
         :param edge_rule:   Rule to define, how cells on the edge of the grid will be handled.
         :param radius:      If radius > 1 it grows the neighborhood
                             by adding the neighbors of the neighbors radius times.
         """
-        self._rel_neighbors = None
-        self._grid_size = ()
-        self._radius = radius
-        self.__edge_rule = edge_rule
+        self._rel_neighbors: tuple[tuple] = None
+        self._grid_size: Coordinate = ()
+        self._radius: int = radius
+        self.__edge_rule: EdgeRule = edge_rule
 
-    def get_neighbors_coordinates(self, coordinate, grid_size):
+    def get_neighbors_coordinates(self, coordinate: Coordinate, grid_size: Coordinate) -> Iterator[Coordinate]:
         """Get a list of absolute coordinates for the cell neighbors.
 
         The EdgeRule can reduce the returned neighbor count.
@@ -82,22 +86,22 @@ class Neighborhood:
         self.__lazy_initialize_relative_neighborhood(grid_size)
         return self.__neighbors_generator(coordinate)
 
-    def _neighbor_rule(self, rel_neighbor):
+    def _neighbor_rule(self, rel_neighbor: Coordinate) -> bool:
         """
         Method that should be overridden to change the type of neighborhood calculated.
 
         By default, this method returns True for all provided coordinates.
-        :param list rel_neighbor: the list of relative coordinates around the cell
+        :param tuple rel_neighbor: the coordinate around the cell to test
         :return: True if the relative coordinate should be considered as a neighbor
         """
         return True
 
-    def __neighborhood_generator(self):
+    def __neighborhood_generator(self) -> Iterator[Coordinate]:
         for coordinate in itertools.product(range(-self._radius, self._radius + 1), repeat=len(self._grid_size)):
             if coordinate != (0,) * len(self._grid_size) and self._neighbor_rule(coordinate):
                 yield tuple(reversed(coordinate))
 
-    def __neighbors_generator(self, coordinate):
+    def __neighbors_generator(self, coordinate: Coordinate) -> Iterator[Coordinate]:
         is_on_edge = Neighborhood.is_on_edge(coordinate, self._grid_size, self._radius)
         if self.__edge_rule == EdgeRule.IGNORE_EDGE_CELLS and is_on_edge:
             return
@@ -111,7 +115,7 @@ class Neighborhood:
             else:
                 yield tuple(map(operator.add, rel_n, coordinate))
 
-    def __lazy_initialize_relative_neighborhood(self, grid_size):
+    def __lazy_initialize_relative_neighborhood(self, grid_size: Coordinate) -> None:
         self._grid_size = grid_size
         if self._rel_neighbors is None:
             self._rel_neighbors = tuple(self.__neighborhood_generator())
@@ -151,7 +155,7 @@ class VonNeumannNeighborhood(Neighborhood):
            X  X  X  X  X                X  X  N  X  X
     """
 
-    def _neighbor_rule(self, rel_neighbor):
+    def _neighbor_rule(self, rel_neighbor: Coordinate) -> bool:
         cross_sum = 0
         for coordinate_i in rel_neighbor:
             cross_sum += abs(coordinate_i)
@@ -177,11 +181,11 @@ class RadialNeighborhood(Neighborhood):
         X  X  X  X  X  X  X          X  X  N  N  N  X  X
     """
 
-    def __init__(self, *args, delta_=0.25, **kwargs):
-        self.delta = delta_
+    def __init__(self, *args, delta_: float = 0.25, **kwargs):
+        self.delta: float = delta_
         super().__init__(*args, **kwargs)
 
-    def _neighbor_rule(self, rel_neighbor):
+    def _neighbor_rule(self, rel_neighbor: Coordinate) -> bool:
         cross_sum = 0
         for coordinate_i in rel_neighbor:
             cross_sum += pow(coordinate_i, 2)
@@ -221,11 +225,11 @@ class HexagonalNeighborhood(Neighborhood):
       X  N  N  N  X           X  N  N  N  X
     """
 
-    def __init__(self, *args, radius=1, **kwargs):
+    def __init__(self, *args, radius: int = 1, **kwargs):
         super().__init__(radius=radius, *args, **kwargs)
         self.__calculate_hexagonal_neighborhood(radius)
 
-    def get_neighbors_coordinates(self, coordinate, grid_size):
+    def get_neighbors_coordinates(self, coordinate: Coordinate, grid_size: Coordinate):
         self._rel_neighbors = self._neighbor_lists[coordinate[1] % 2]
         return super().get_neighbors_coordinates(coordinate, grid_size)
 

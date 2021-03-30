@@ -19,7 +19,7 @@
 """Game of life example."""
 
 
-from qmaton import Automaton, MooreNeighborhood, State
+from qmaton import Automaton, MooreNeighborhood, Neighborhood, State
 
 
 class GameOfLife(Automaton):
@@ -33,18 +33,18 @@ class GameOfLife(Automaton):
     DEATH = State("Death", "#FFF")
     """Death state, white"""
 
-    def __init__(self, length=10, width=10):
+    def __init__(self, length: int = 10, width: int = 10):
         """Create an Automaton, already set up with rules and states.
 
         :param int length: the length of the grid of the automaton
         :param int width: the width of the grid of the automaton
         """
         super().__init__(length, width, GameOfLife.DEATH)
-        self.states = [GameOfLife.LIFE, GameOfLife.DEATH]
-        self.rule = self.main_rule
-        self.neighborhood = MooreNeighborhood()
+        self.states: list[State] = [GameOfLife.LIFE, GameOfLife.DEATH]
+        self.rule: callable[[int, int], State] = self.main_rule
+        self.neighborhood: Neighborhood = MooreNeighborhood()
 
-    def main_rule(self, x, y):
+    def main_rule(self, x: int, y: int) -> State:
         if self.is_on_edge(x, y):
             return self.grid[x][y]
         if self.grid[x][y] == GameOfLife.DEATH:
@@ -53,7 +53,7 @@ class GameOfLife(Automaton):
             return self.rule_life_cell(x, y)
         return self.grid[x][y]
 
-    def rule_death_cell(self, x, y):
+    def rule_death_cell(self, x: int, y: int) -> State:
         if (
             self.grid[x][y] == GameOfLife.DEATH
             and self.count_neighbors(self.neighborhood, x, y, (GameOfLife.LIFE,)) == 3
@@ -61,7 +61,7 @@ class GameOfLife(Automaton):
             return GameOfLife.LIFE
         return self.grid[x][y]
 
-    def rule_life_cell(self, x, y):
+    def rule_life_cell(self, x: int, y: int) -> State:
         if self.grid[x][y] != GameOfLife.LIFE:
             return self.grid[x][y]
         alive = self.count_neighbors(self.neighborhood, x, y, (GameOfLife.LIFE,))

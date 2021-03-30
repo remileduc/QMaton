@@ -19,7 +19,12 @@
 """Automaton runner."""
 
 
+from __future__ import annotations
+
 from time import sleep, time
+
+from .automaton import Automaton
+from .automaton_history import AutomatonHistory
 
 
 class AutomatonRunner:
@@ -34,22 +39,22 @@ class AutomatonRunner:
         history the history manager to update
     """
 
-    def __init__(self, nb_iter=100, iter_per_second=10, history=None):
+    def __init__(self, nb_iter: int = 100, iter_per_second: int = 10, history: AutomatonHistory = None):
         """Constructor
 
         :param int nb_iter: the number of iterations to realize
         :param float iter_per_second: number of iterations per second (can't be 0)
         """
-        self.sleep_time = 1 / iter_per_second
-        self.nb_iter = nb_iter
-        self.history = history
-        self.__stop = False
+        self.sleep_time: float = 1 / iter_per_second
+        self.nb_iter: int = nb_iter
+        self.history: AutomatonHistory = history
+        self.__stop: bool = False
 
-    def stop(self):
+    def stop(self) -> None:
         """Stop the runner."""
         self.__stop = True
 
-    def launch(self, automaton, callback=None):
+    def launch(self, automaton: Automaton, callback: callable[[Automaton], None] = None) -> None:
         """Start the runner.
 
         The time this function will run should be nb_iter * sleep_time seconds

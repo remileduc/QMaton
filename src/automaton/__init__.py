@@ -18,5 +18,5 @@
 
 # flake8: noqa
 
-from .game_of_life import *
-from .programme_p import *
+from .game_of_life import GameOfLife
+from .programme_p import GameOfFire

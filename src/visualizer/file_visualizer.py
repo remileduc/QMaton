@@ -22,6 +22,8 @@
 
 import os
 
+from qmaton import Automaton
+
 
 class FileVisualizer:
     """Print the steps in the console, or save it in a file.
@@ -30,12 +32,12 @@ class FileVisualizer:
         file the file where to write results. If not set, print on console.
     """
 
-    def __init__(self, file=""):
-        self.file = file
+    def __init__(self, file: str = ""):
+        self.file: str = file
         if file and os.path.exists(file):
             os.remove(file)
 
-    def draw(self, automaton):
+    def draw(self, automaton: Automaton) -> None:
         """Callback for the AutomatonRunner."""
         if not self.file:
             print(automaton)
