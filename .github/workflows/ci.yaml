@@ -68,7 +68,7 @@ jobs:
         env:
           QT_DEBUG_PLUGINS: 1
           PYTHONPATH: ${{ github.workspace }}/src
-        run: xvfb-run --auto-servernum $(which python3) test.py
+        run: xvfb-run --auto-servernum $(which pytest) --cache-clear --cov=src tests/ > pytest-coverage.txt
 
       - name: Print test results
         if: ${{ always() }}
