@@ -54,7 +54,7 @@ jobs:
       - name: Install environment
         run: |
           sudo apt update
-          sudo apt install -y xvfb x11-utils libxkbcommon-x11-0
+          sudo apt install -y xvfb x11-utils libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0
           sudo apt clean
 
       # install python requirements
@@ -68,7 +68,7 @@ jobs:
         env:
           QT_DEBUG_PLUGINS: 1
           PYTHONPATH: ${{ github.workspace }}/src
-        run: xvfb-run --auto-servernum $(which pytest) --cache-clear --cov=src tests/ > pytest-coverage.txt
+        run: xvfb-run --auto-servernum $(which python3) test.py
 
       - name: Print test results
         if: ${{ always() }}
