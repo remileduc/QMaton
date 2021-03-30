@@ -21,4 +21,4 @@
 """QMaton UI module."""
 
 
-from .MainWindow import *
+from .MainWindow import MainWindow

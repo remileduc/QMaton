@@ -18,6 +18,6 @@
 
 # flake8: noqa
 
-from .file_visualizer import *
-from .mpl_visualizer import *
-from .qt_visualizer import *
+from .file_visualizer import FileVisualizer
+from .mpl_visualizer import MPLVisualizer
+from .qt_visualizer import QtVisualizer

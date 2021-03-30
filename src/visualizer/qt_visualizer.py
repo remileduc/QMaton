@@ -20,7 +20,7 @@
 """Show the automaton in a UI window."""
 
 
-from PyQt5.QtCore import QObject, Qt, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QObject, QPoint, Qt, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import QGridLayout, QLabel, QMenu, QWidget
 from qmaton import Automaton, AutomatonRunner
@@ -33,13 +33,13 @@ class QtVisualizerWorker(QObject):
     finished = pyqtSignal()
     step_calculated = pyqtSignal(Automaton)
 
-    def __init__(self, automaton, automatonRunner, parent=None):
+    def __init__(self, automaton: Automaton, automatonRunner: AutomatonRunner, parent: QObject = None):
         super().__init__(parent)
-        self._automaton = automaton
-        self._automatonRunner = automatonRunner
+        self._automaton: Automaton = automaton
+        self._automatonRunner: AutomatonRunner = automatonRunner
 
     @pyqtSlot()
-    def run(self):
+    def run(self) -> None:
         self.started.emit()
         self._automatonRunner.launch(self._automaton, lambda automaton: self.step_calculated.emit(automaton))
         self.finished.emit()
@@ -52,14 +52,14 @@ class QtVisualizer(QWidget):
     finished = pyqtSignal()
     step_calculated = pyqtSignal(Automaton)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget = None):
         super().__init__(parent)
-        self._thread = None
-        self._worker = None
-        self._automaton = None
-        self.__layout = QGridLayout(self)
+        self._thread: QThread = None
+        self._worker: QtVisualizerWorker = None
+        self._automaton: Automaton = None
+        self.__layout: QGridLayout = QGridLayout(self)
 
-    def set_automaton(self, automaton):
+    def set_automaton(self, automaton: Automaton) -> None:
         """Reset the widget to show the given automaton.
 
         In case the automaton is the same but you just want to update the widget, you should call the draw()
@@ -84,7 +84,7 @@ class QtVisualizer(QWidget):
     # Slots
 
     @pyqtSlot(Automaton)
-    def draw(self, automaton=None):
+    def draw(self, automaton: Automaton = None) -> None:
         """Callback for the AutomatonRunner."""
         if not automaton:
             automaton = self._automaton
@@ -94,7 +94,7 @@ class QtVisualizer(QWidget):
                 self.__change_label_color(i, j, grid[i][j].color)
 
     @pyqtSlot(AutomatonRunner)
-    def run(self, automatonRunner):
+    def run(self, automatonRunner: AutomatonRunner) -> None:
         """Run the automaton through the given AutomatonRunner in a separate thread."""
         self.__initialize_worker(automatonRunner)
         self.__initialize_thread()
@@ -102,19 +102,19 @@ class QtVisualizer(QWidget):
         self._thread.start()
 
     @pyqtSlot(AutomatonRunner)
-    def run_seq(self, automatonRunner):
+    def run_seq(self, automatonRunner: AutomatonRunner) -> None:
         """Run the automaton through the given AutomatonRunner in the current thread (sequentially)."""
         self.__initialize_worker(automatonRunner)
         # Start runner
         self._worker.run()
 
     @pyqtSlot()
-    def stop(self):
+    def stop(self) -> None:
         self._thread.exit(-1)
 
     # Private methods
 
-    def __clearLayout(self):
+    def __clearLayout(self) -> None:
         while self.__layout.count():
             item = self.__layout.takeAt(0)
             widget = item.widget()
@@ -122,7 +122,7 @@ class QtVisualizer(QWidget):
                 widget.setParent(None)
                 widget.deleteLater()
 
-    def __initialize_worker(self, automatonRunner):
+    def __initialize_worker(self, automatonRunner: AutomatonRunner) -> None:
         # Create thread environment
         self._worker = QtVisualizerWorker(self._automaton, automatonRunner)
         # Connect everything
@@ -132,7 +132,7 @@ class QtVisualizer(QWidget):
         self._worker.finished.connect(self._worker.deleteLater)
         self._worker.step_calculated.connect(self.draw)
 
-    def __initialize_thread(self):
+    def __initialize_thread(self) -> None:
         # Create thread environment
         self._thread = QThread(self)
         self._worker.moveToThread(self._thread)
@@ -140,7 +140,7 @@ class QtVisualizer(QWidget):
         self._thread.started.connect(self._worker.run)
         self._worker.finished.connect(self._thread.quit)
 
-    def __label_contextual_menu(self, pos, x, y):
+    def __label_contextual_menu(self, pos: QPoint, x: int, y: int) -> None:
         if self._thread and self._thread.isRunning():
             return
 
@@ -169,5 +169,5 @@ class QtVisualizer(QWidget):
             self._automaton.grid[x][y] = state
             self.__change_label_color(x, y, state.color)
 
-    def __change_label_color(self, x, y, color):
+    def __change_label_color(self, x: int, y: int, color: str):
         self.__layout.itemAtPosition(x, y).widget().setStyleSheet(f"QLabel {{ background-color : {color} }}")

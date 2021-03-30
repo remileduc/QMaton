@@ -19,6 +19,12 @@
 """AutomatonHistory class, holds the different calculated steps of an automaton."""
 
 from copy import deepcopy
+from typing import List
+
+from .automaton import Automaton, State
+
+Grid = List[List[State]]
+"""The grid of an automaton."""
 
 
 class AutomatonHistory:
@@ -29,45 +35,45 @@ class AutomatonHistory:
     It is best used with an AutomatonRunner.
     """
 
-    def __init__(self, history_size=10000):
+    def __init__(self, history_size: int = 10000):
         """Constructor
 
         :param int history_size: the size of the history. Over this, it won't be possible to store more steps
         """
-        self.__history_size = history_size
-        self.__history = []
-        self.__current = -1
+        self.__history_size: int = history_size
+        self.__history: list[Grid] = []
+        self.__current: int = -1
 
     # List style
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> Grid:
         """Return the grid at the given position in the history."""
         return deepcopy(self.__history[idx])
 
-    def __setitem__(self, idx, grid):
+    def __setitem__(self, idx: int, grid: Grid):
         """Creates a deep copy of the given grid and stores it at the given position."""
         self.__history[idx] = deepcopy(grid)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.__history)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return bool(self.__history)
 
     # Properties
 
     @property
-    def history_size(self):
+    def history_size(self) -> int:
         """Return the maximum size the history can take."""
         return self.__history_size
 
     @property
-    def current_index(self):
+    def current_index(self) -> int:
         """Return the current index in the history."""
         return self.__current
 
     @property
-    def remaining_steps(self):
+    def remaining_steps(self) -> int:
         """Return the number of steps remaining to arrive to latest.
         Number of time you can safely call move_forward(1).
         """
@@ -75,14 +81,14 @@ class AutomatonHistory:
 
     # List management
 
-    def get(self):
+    def get(self) -> Grid:
         """Return last saved state.
 
         Use operator [i] to access specific step.
         """
         return self[self.__current]
 
-    def append(self, grid):
+    def append(self, grid: Grid) -> None:
         """Creates a deep copy of the grid and append it to the history.
 
         :param grid: the grid to add in the history
@@ -94,7 +100,7 @@ class AutomatonHistory:
         self.__history.append(deepcopy(grid))
         self.__current += 1
 
-    def append_automaton_state(self, automaton):
+    def append_automaton_state(self, automaton: Automaton) -> None:
         """Creates a deep copy of the grid of the given automaton and append it to the history.
 
         This method can safely be used as callback for an AutomatonRunner.
@@ -103,12 +109,12 @@ class AutomatonHistory:
         """
         self.append(automaton.grid)
 
-    def clear(self):
+    def clear(self) -> None:
         """Clear the history."""
         self.__history.clear()
         self.__current = -1
 
-    def clear_after(self, idx=-1):
+    def clear_after(self, idx: int = -1) -> None:
         """Clear the history after the given index.
 
         The given index is kept: automatonHistory[idx] is still valid after the call.
@@ -124,7 +130,7 @@ class AutomatonHistory:
 
     # Navigation
 
-    def move_backward(self, step=1):
+    def move_backward(self, step: int = 1) -> Grid:
         """Move current_index of X steps back.
 
         :return: the saved state at the new current_index.
@@ -132,7 +138,7 @@ class AutomatonHistory:
         self.__current -= step
         return self[self.__current]
 
-    def move_forward(self, step=1):
+    def move_forward(self, step: int = 1) -> Grid:
         """Move current_index of X steps forward.
 
         :return: the saved state at the new current_index.
@@ -140,7 +146,7 @@ class AutomatonHistory:
         self.__current += step
         return self[self.__current]
 
-    def move_to(self, idx):
+    def move_to(self, idx: int) -> Grid:
         """Move current_index to idx.
 
         :return: the saved state at the new current_index.

@@ -18,17 +18,23 @@
 
 """Automaton class, represneting the grid of cells."""
 
+from __future__ import annotations
 
-from collections import namedtuple
+from dataclasses import dataclass
 
 from .neighborhood import Neighborhood
 
-State = namedtuple("State", ["name", "color"])
-"""State used by the Automaton.
 
-Each cell of the Automaton can be a State.
-A State is simply a name associated to a color.
-"""
+@dataclass(frozen=True)
+class State:
+    """State used by the Automaton.
+
+    Each cell of the Automaton can be a State.
+    A State is simply a name associated to a color.
+    """
+
+    name: str
+    color: str
 
 
 class Automaton:
@@ -48,20 +54,20 @@ class Automaton:
         neighborhood the type of neighborhood used
     """
 
-    def __init__(self, length=10, width=10, default_value=None):
+    def __init__(self, length: int = 10, width: int = 10, default_value: State = None):
         """Constructor
 
         :param int length: the length of the grid
         :param int width: the width of the grid
         :param State default_value: value used to fill the grid
         """
-        self.__grid_size = (length, width)
-        self.__default_value = default_value
-        self.states = []
-        self.rule = None
-        self.grid = self.__init_grid()
+        self.__grid_size: tuple[int, int] = (length, width)
+        self.__default_value: State = default_value
+        self.states: list[State] = []
+        self.rule: callable[[int, int], State] = None
+        self.grid: list[list[State]] = self.__init_grid()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representing the grid.
 
         The name of the state of all the cells are written, seperated by a space
@@ -74,31 +80,31 @@ class Automaton:
             s += "\n"
         return s
 
-    def __eq__(self, other):
+    def __eq__(self, other: Automaton) -> bool:
         return self.states == other.states and self.grid == other.grid
 
     # Properties
 
     @property
-    def grid_size(self):
+    def grid_size(self) -> tuple[int, int]:
         """Return the size of the grid in a tuple (length, width)."""
         return self.__grid_size
 
     @property
-    def length(self):
+    def length(self) -> int:
         return self.__grid_size[0]
 
     @property
-    def width(self):
+    def width(self) -> int:
         return self.__grid_size[1]
 
     # Grid management
 
-    def clear_grid(self):
+    def clear_grid(self) -> None:
         """Reset the grid with the default value in all cells."""
         self.grid = self.__init_grid()
 
-    def random_initialize(self):
+    def random_initialize(self) -> None:
         """Initialize each cell of the grid with a random State from the list of states."""
         import random
 
@@ -110,7 +116,7 @@ class Automaton:
 
     # Run automaton
 
-    def apply_rule(self):
+    def apply_rule(self) -> None:
         """Calculate an iteration of the cellular automaton.
 
         The setup rule is applied sequencially to each cell.
@@ -124,7 +130,7 @@ class Automaton:
 
     # Neighborhood utils
 
-    def is_on_edge(self, x, y, radius=1):
+    def is_on_edge(self, x: int, y: int, radius: int = 1) -> bool:
         """Tell if the cell in the coordinates (x, y) is on the edge of the grid
 
         :param int x: x coorindate
@@ -133,7 +139,7 @@ class Automaton:
         """
         return Neighborhood.is_on_edge((x, y), self.grid_size, radius)
 
-    def count_neighbors(self, neighborhood, x, y, states):
+    def count_neighbors(self, neighborhood: Neighborhood, x: int, y: int, states: list[State]) -> int:
         """
         Count the neighbors of the cell grid[coordinate[0]][coordinate[1]] which state is in `states
 
@@ -148,7 +154,7 @@ class Automaton:
 
     # Serialization
 
-    def toJSON(self):
+    def toJSON(self) -> str:
         """Return a JSON string representation of the automaton."""
         import json
 
@@ -157,7 +163,7 @@ class Automaton:
         return json.dumps(self, indent=4, cls=AutomatonSerializer)
 
     @classmethod
-    def fromJSON(cls, json_str):
+    def fromJSON(cls, json_str: str) -> Automaton:
         """Create an automaton from the JSON string."""
         import json
 
@@ -170,5 +176,5 @@ class Automaton:
 
     # Private methods
 
-    def __init_grid(self):
+    def __init_grid(self) -> list[list[State]]:
         return [[self.__default_value for _ in range(self.width)] for _ in range(self.length)]

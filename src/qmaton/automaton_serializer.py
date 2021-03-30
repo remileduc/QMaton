@@ -21,7 +21,7 @@
 
 from json import JSONEncoder
 
-from qmaton import Automaton, State
+from .automaton import Automaton, State
 
 
 class AutomatonSerializer(JSONEncoder):
@@ -31,22 +31,24 @@ class AutomatonSerializer(JSONEncoder):
     and Automaton.fromJSON().
     """
 
-    def default(self, o):
+    def default(self, o: object) -> object:
         """Method used to serialize automaton to JSON.
 
         Use this way: json.dumps(automaton, cls=AutomatonSerializer)
         """
 
-        if not isinstance(o, Automaton):
-            return super().default(o)
-        return {
-            "states": o.states,
-            "grid_size": o.grid_size,
-            "grid": [[state.name for state in line] for line in o.grid],
-        }
+        if isinstance(o, State):
+            return [o.name, o.color]
+        if isinstance(o, Automaton):
+            return {
+                "states": o.states,
+                "grid_size": o.grid_size,
+                "grid": [[state.name for state in line] for line in o.grid],
+            }
+        return super().default(o)
 
     @staticmethod
-    def decode(o):
+    def decode(o: object) -> dict:
         """Method used to deserialize an Automaton from a JSON string.
 
         To use it, you first need to know the type of the automaton. It is easier to use
