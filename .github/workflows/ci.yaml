@@ -12,6 +12,7 @@ on:
 jobs:
   # Runs linters
   super-lint:
+    if: false
     name: Lint Code Base
     runs-on: ubuntu-latest
 
@@ -66,10 +67,8 @@ jobs:
       - name: Run tests and coverage
         env:
           QT_DEBUG_PLUGINS: 1
-        run: |
-          ulimit -c unlimited
-          cd src/
-          sudo catchsegv xvfb-run --auto-servernum pytest --cache-clear --cov=. ../tests/ > ../pytest-coverage.txt
+          PYTHONPATH: ${{ github.workspace }}/src
+        run: xvfb-run --auto-servernum $(which pytest) --cache-clear --cov=src tests/ > pytest-coverage.txt
 
       - name: Print test results
         if: ${{ always() }}

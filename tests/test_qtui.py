@@ -37,18 +37,15 @@ class DumbAutomaton(Automaton):
         return self.grid[x][y]
 
 
-@fixture(autouse=True, scope="module")
-def application():
-    return QApplication([])
-
-
-def test_MainWindow_init(tmp_path):
-    m = MainWindow()
+def test_MainWindow_init():
+    app = QApplication([])
+    m = MainWindow(DumbAutomaton)
     assert m._automaton is None
 
 
-def test_MainWindow_set_automaton(capsys):
+def test_MainWindow_set_automaton():
+    app = QApplication([])
     dab = DumbAutomaton(6, 3)
-    m = MainWindow()
+    m = MainWindow(DumbAutomaton)
     m.set_automaton(dab)
     assert m._automaton is dab
