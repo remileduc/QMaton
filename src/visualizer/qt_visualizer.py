@@ -94,12 +94,13 @@ class QtVisualizer(QWidget):
                 self.__change_label_color(i, j, grid[i][j].color)
 
     @pyqtSlot(AutomatonRunner)
-    def run(self, automatonRunner: AutomatonRunner) -> None:
+    def run(self, automatonRunner: AutomatonRunner) -> QThread:
         """Run the automaton through the given AutomatonRunner in a separate thread."""
         self.__initialize_worker(automatonRunner)
         self.__initialize_thread()
         # Start thread
         self._thread.start()
+        return self._thread
 
     @pyqtSlot(AutomatonRunner)
     def run_seq(self, automatonRunner: AutomatonRunner) -> None:
@@ -138,7 +139,7 @@ class QtVisualizer(QWidget):
         self._worker.moveToThread(self._thread)
         # Connect everything
         self._thread.started.connect(self._worker.run)
-        self._worker.finished.connect(self._thread.quit)
+        self._worker.finished.connect(self._thread.quit, Qt.DirectConnection)
 
     def __label_contextual_menu(self, pos: QPoint, x: int, y: int) -> None:
         if self._thread and self._thread.isRunning():

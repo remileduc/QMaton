@@ -17,12 +17,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""Test file for qtui module"""
+"""Test file for MainWindow class"""
 
+from os import remove
+
+from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QApplication
 from pytest import fixture
 from qmaton import Automaton, State
-from qtui import MainWindow
+from qtui import MainWindow, settings
+
+settings.application = "QMaton_test"
 
 
 class DumbAutomaton(Automaton):
@@ -37,14 +42,24 @@ class DumbAutomaton(Automaton):
         return self.grid[x][y]
 
 
+@fixture(autouse=True)
+def app():
+    yield QApplication([])
+    # teardown
+    s = QSettings(QSettings.IniFormat, QSettings.UserScope, settings.organization, settings.application)
+    try:
+        remove(s.fileName())
+    except OSError:
+        pass
+
+
 def test_MainWindow_init():
-    app = QApplication([])
     m = MainWindow(DumbAutomaton)
     assert m._automaton is None
+    m.close()  # write settings
 
 
 def test_MainWindow_set_automaton():
-    app = QApplication([])
     dab = DumbAutomaton(6, 3)
     m = MainWindow(DumbAutomaton)
     m.set_automaton(dab)
