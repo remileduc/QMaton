@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>654</width>
-    <height>447</height>
+    <width>694</width>
+    <height>454</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -153,6 +153,25 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="4">
+           <widget class="QSpinBox" name="spNbSteps">
+            <property name="toolTip">
+             <string>Numbers of steps to run. If -1, will run until stopped.</string>
+            </property>
+            <property name="suffix">
+             <string> steps</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>1000</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -252,7 +271,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>654</width>
+     <width>694</width>
      <height>38</height>
     </rect>
    </property>

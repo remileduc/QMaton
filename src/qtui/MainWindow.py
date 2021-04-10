@@ -135,7 +135,7 @@ class MainWindow(QMainWindow):
             self.wautomaton.stop()
         else:
             self._automaton_started()
-            self.wautomaton.run(AutomatonRunner(10, self.spIPS.value(), history=self._history))
+            self.wautomaton.run(AutomatonRunner(self.spNbSteps.value(), self.spIPS.value(), history=self._history))
 
     @pyqtSlot()
     def _run_backward(self):
