@@ -51,13 +51,16 @@ class QtVisualizer(QWidget):
     started = pyqtSignal()
     finished = pyqtSignal()
     step_calculated = pyqtSignal(Automaton)
+    grid_changed = pyqtSignal()
 
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
         self._thread: QThread = None
         self._worker: QtVisualizerWorker = None
         self._automaton: Automaton = None
+        self.__automaton_runner: AutomatonRunner = None
         self.__layout: QGridLayout = QGridLayout(self)
+        self.__layout.setSpacing(1)
 
     def set_automaton(self, automaton: Automaton) -> None:
         """Reset the widget to show the given automaton.
@@ -111,7 +114,10 @@ class QtVisualizer(QWidget):
 
     @pyqtSlot()
     def stop(self) -> None:
-        self._thread.exit(-1)
+        if self.__automaton_runner:
+            self.__automaton_runner.stop()
+        if self._thread and self._thread.isRunning():
+            self._thread.exit(-1)
 
     # Private methods
 
@@ -124,6 +130,7 @@ class QtVisualizer(QWidget):
                 widget.deleteLater()
 
     def __initialize_worker(self, automatonRunner: AutomatonRunner) -> None:
+        self.__automaton_runner = automatonRunner
         # Create thread environment
         self._worker = QtVisualizerWorker(self._automaton, automatonRunner)
         # Connect everything
@@ -169,6 +176,7 @@ class QtVisualizer(QWidget):
         if state is not None and state != oldState:
             self._automaton.grid[x][y] = state
             self.__change_label_color(x, y, state.color)
+            self.grid_changed.emit()
 
     def __change_label_color(self, x: int, y: int, color: str):
         self.__layout.itemAtPosition(x, y).widget().setStyleSheet(f"QLabel {{ background-color : {color} }}")

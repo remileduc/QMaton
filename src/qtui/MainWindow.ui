@@ -462,6 +462,7 @@
     <signal>started()</signal>
     <signal>finished()</signal>
     <signal>step_calculated()</signal>
+    <signal>grid_changed()</signal>
     <slot>draw()</slot>
     <slot>run()</slot>
     <slot>stop()</slot>
@@ -585,27 +586,11 @@
    <slot>_automaton_started()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>276</x>
-     <y>289</y>
+     <x>294</x>
+     <y>282</y>
     </hint>
     <hint type="destinationlabel">
      <x>263</x>
-     <y>429</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>wautomaton</sender>
-   <signal>finished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>_automaton_finished()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>496</x>
-     <y>289</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>514</x>
      <y>429</y>
     </hint>
    </hints>
@@ -617,8 +602,8 @@
    <slot>_automaton_step_calculated()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>496</x>
-     <y>289</y>
+     <x>514</x>
+     <y>282</y>
     </hint>
     <hint type="destinationlabel">
      <x>514</x>
@@ -722,6 +707,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>wautomaton</sender>
+   <signal>grid_changed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>_automaton_grid_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>279</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>236</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>wautomaton</sender>
+   <signal>finished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>_automaton_finished()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>348</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>329</x>
+     <y>313</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>_open_file()</slot>
@@ -737,5 +754,6 @@
   <slot>_run_backward()</slot>
   <slot>_settings_validated()</slot>
   <slot>_set_step(int)</slot>
+  <slot>_automaton_grid_changed()</slot>
  </slots>
 </ui>

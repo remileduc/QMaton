@@ -77,6 +77,11 @@ class MainWindow(QMainWindow):
     def _automaton_step_calculated(self, automaton):
         self.__updateSlider()
 
+    @pyqtSlot()
+    def _automaton_grid_changed(self):
+        self.__clear_history()
+        self.__enable_ui(True)
+
     # Menu slots
 
     @pyqtSlot()
