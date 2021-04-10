@@ -69,19 +69,9 @@ jobs:
         run: xvfb-run --auto-servernum $(which pytest) --cache-clear --cov=src tests/ > pytest-coverage.txt
 
       - name: Print test results
-        if: ${{ always() }}
+        if: ${{ failure() }}
         run: cat pytest-coverage.txt
 
       - name: Comment Coverage
         if: ${{ always() }}
         uses: coroo/pytest-coverage-commentator@main
-
-      - name: chmod
-        if: ${{ always() }}
-        run: sudo chmod -R a+rwx /var/crash
-      - name: Upload artifacts
-        if: ${{ always() }}
-        uses: actions/upload-artifact@master
-        with:
-          name: crashes
-          path: /var/crash
