@@ -57,6 +57,7 @@ class QtVisualizer(QWidget):
         self._thread: QThread = None
         self._worker: QtVisualizerWorker = None
         self._automaton: Automaton = None
+        self.__automaton_runner: AutomatonRunner = None
         self.__layout: QGridLayout = QGridLayout(self)
 
     def set_automaton(self, automaton: Automaton) -> None:
@@ -111,7 +112,10 @@ class QtVisualizer(QWidget):
 
     @pyqtSlot()
     def stop(self) -> None:
-        self._thread.exit(-1)
+        if self.__automaton_runner:
+            self.__automaton_runner.stop()
+        if self._thread and self._thread.isRunning():
+            self._thread.exit(-1)
 
     # Private methods
 
@@ -124,6 +128,7 @@ class QtVisualizer(QWidget):
                 widget.deleteLater()
 
     def __initialize_worker(self, automatonRunner: AutomatonRunner) -> None:
+        self.__automaton_runner = automatonRunner
         # Create thread environment
         self._worker = QtVisualizerWorker(self._automaton, automatonRunner)
         # Connect everything
