@@ -35,7 +35,7 @@ class AutomatonRunner:
 
     Attributes:
         sleep_time the number of ms between each iteration
-        nb_iter the number of iterations to do
+        nb_iter the number of iterations to do. If negative, will run infinitely
         history the history manager to update
     """
 
@@ -59,6 +59,7 @@ class AutomatonRunner:
 
         The time this function will run should be nb_iter * sleep_time seconds
         (or nb_iter / iter_per_second seconds).
+        Though, if nb_iter is negative, it will run infinitely.
 
         Note that this function should be ran in a separate thread to avoid any freeze.
 
@@ -67,7 +68,7 @@ class AutomatonRunner:
         """
         self.__stop = False
         i = 0
-        while not self.__stop and i < self.nb_iter:
+        while not self.__stop and (self.nb_iter < 0 or i < self.nb_iter):
             time_before = time()
             if self.history is not None and not self.history:  # history is empty
                 self.history.append_automaton_state(automaton)

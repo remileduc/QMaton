@@ -41,6 +41,7 @@ def save_settings(main_window):
     settings = __get_settings(main_window)
     settings.setValue("showSettings", main_window.settingsBox.isChecked())
     settings.setValue("ips", main_window.spIPS.value())
+    settings.setValue("nbSteps", main_window.spNbSteps.value())
     global save_path
     settings.setValue("save_path", save_path)
 
@@ -58,6 +59,7 @@ def restore_settings(main_window):
     settings = __get_settings(main_window)
     main_window.settingsBox.setChecked(settings.value("showSettings", True, type=bool))
     main_window.spIPS.setValue(settings.value("ips", 10, type=int))
+    main_window.spNbSteps.setValue(settings.value("nbSteps", -1, type=int))
     global save_path
     save_path = settings.value("save_path", "", type=str)
 
