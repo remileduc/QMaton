@@ -59,6 +59,7 @@ class QtVisualizer(QWidget):
         self._automaton: Automaton = None
         self.__automaton_runner: AutomatonRunner = None
         self.__layout: QGridLayout = QGridLayout(self)
+        self.__layout.setSpacing(1)
 
     def set_automaton(self, automaton: Automaton) -> None:
         """Reset the widget to show the given automaton.
