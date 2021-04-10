@@ -51,6 +51,7 @@ class QtVisualizer(QWidget):
     started = pyqtSignal()
     finished = pyqtSignal()
     step_calculated = pyqtSignal(Automaton)
+    grid_changed = pyqtSignal()
 
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
@@ -175,6 +176,7 @@ class QtVisualizer(QWidget):
         if state is not None and state != oldState:
             self._automaton.grid[x][y] = state
             self.__change_label_color(x, y, state.color)
+            self.grid_changed.emit()
 
     def __change_label_color(self, x: int, y: int, color: str):
         self.__layout.itemAtPosition(x, y).widget().setStyleSheet(f"QLabel {{ background-color : {color} }}")
