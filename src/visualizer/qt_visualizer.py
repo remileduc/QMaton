@@ -49,9 +49,17 @@ class QtVisualizer(QWidget):
     """Show the automaton in a UI window."""
 
     started = pyqtSignal()
+    """Emitted when we start running the automaton, or when we change the automaton."""
     finished = pyqtSignal()
+    """Emitted when the running or the change of automaton is finished."""
     step_calculated = pyqtSignal(Automaton)
+    """Emitted during automaton running, at each step."""
     grid_changed = pyqtSignal()
+    """Emitted when th grid is editted."""
+    automaton_has_changed = pyqtSignal(Automaton)
+    """Emitted when the automaton has changed (possible change of states)."""
+    cell_clicked = pyqtSignal(QPoint)
+    """Emitted when a cell has been clicked."""
 
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
@@ -61,6 +69,7 @@ class QtVisualizer(QWidget):
         self.__automaton_runner: AutomatonRunner = None
         self.__layout: QGridLayout = QGridLayout(self)
         self.__layout.setSpacing(1)
+        self.__is_running: bool = False
 
     def set_automaton(self, automaton: Automaton) -> None:
         """Reset the widget to show the given automaton.
@@ -68,7 +77,7 @@ class QtVisualizer(QWidget):
         In case the automaton is the same but you just want to update the widget, you should call the draw()
         method instead.
         """
-        self.started.emit()
+        self.__start()
         self._automaton = automaton
         self.__clearLayout()
 
@@ -82,7 +91,12 @@ class QtVisualizer(QWidget):
                 )
                 self.__layout.addWidget(label, line, cell)
         self.draw()
-        self.finished.emit()
+        self.__stop()
+        self.automaton_has_changed.emit(self._automaton)
+
+    def is_running(self) -> bool:
+        """Tells if we are currently running the automaton."""
+        return self.__is_running
 
     # Slots
 
@@ -119,6 +133,21 @@ class QtVisualizer(QWidget):
         if self._thread and self._thread.isRunning():
             self._thread.exit(-1)
 
+    # Override
+
+    def mouseReleaseEvent(self, event):
+        if self.is_running():
+            return
+        w = self.childAt(event.pos())
+        if not w or not isinstance(w, QLabel):
+            return
+        # try to find the position of the label
+        for i in range(self.__layout.count()):
+            if self.__layout.itemAt(i).widget() is w:
+                (x, y, _, _) = self.__layout.getItemPosition(i)
+                self.cell_clicked.emit(QPoint(x, y))
+                return
+
     # Private methods
 
     def __clearLayout(self) -> None:
@@ -134,8 +163,8 @@ class QtVisualizer(QWidget):
         # Create thread environment
         self._worker = QtVisualizerWorker(self._automaton, automatonRunner)
         # Connect everything
-        self._worker.started.connect(self.started)
-        self._worker.finished.connect(self.finished)
+        self._worker.started.connect(self.__start)
+        self._worker.finished.connect(self.__stop)
         self._worker.step_calculated.connect(self.step_calculated)
         self._worker.finished.connect(self._worker.deleteLater)
         self._worker.step_calculated.connect(self.draw)
@@ -180,3 +209,15 @@ class QtVisualizer(QWidget):
 
     def __change_label_color(self, x: int, y: int, color: str):
         self.__layout.itemAtPosition(x, y).widget().setStyleSheet(f"QLabel {{ background-color : {color} }}")
+
+    # Private slots
+
+    @pyqtSlot()
+    def __start(self):
+        self.__is_running = True
+        self.started.emit()
+
+    @pyqtSlot()
+    def __stop(self):
+        self.__is_running = False
+        self.finished.emit()
