@@ -6,178 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>694</width>
-    <height>454</height>
+    <width>656</width>
+    <height>457</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>QMaton</string>
   </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AnimatedDocks</set>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QGroupBox" name="settingsBox">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="title">
-       <string>Automaton settings</string>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QWidget" name="settingsWidget" native="true">
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Grid size:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spLength</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Animation:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spIPS</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="5">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>x</string>
-            </property>
-            <property name="buddy">
-             <cstring>spWidth</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="spLength">
-            <property name="suffix">
-             <string> (length)</string>
-            </property>
-            <property name="maximum">
-             <number>40</number>
-            </property>
-            <property name="value">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" colspan="3">
-           <widget class="QSpinBox" name="spIPS">
-            <property name="suffix">
-             <string> images / second</string>
-            </property>
-            <property name="maximum">
-             <number>60</number>
-            </property>
-            <property name="value">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QSpinBox" name="spWidth">
-            <property name="suffix">
-             <string> (width)</string>
-            </property>
-            <property name="maximum">
-             <number>40</number>
-            </property>
-            <property name="value">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="4">
-           <widget class="QPushButton" name="btnValidateSettings">
-            <property name="toolTip">
-             <string>Validate settings</string>
-            </property>
-            <property name="text">
-             <string>Validate</string>
-            </property>
-            <property name="icon">
-             <iconset resource="resources/resources.qrc">
-              <normaloff>:/icons/check</normaloff>:/icons/check</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>16</width>
-              <height>16</height>
-             </size>
-            </property>
-            <property name="default">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="4">
-           <widget class="QSpinBox" name="spNbSteps">
-            <property name="toolTip">
-             <string>Numbers of steps to run. If -1, will run until stopped.</string>
-            </property>
-            <property name="suffix">
-             <string> steps</string>
-            </property>
-            <property name="minimum">
-             <number>-1</number>
-            </property>
-            <property name="maximum">
-             <number>1000</number>
-            </property>
-            <property name="value">
-             <number>-1</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item>
      <widget class="QtVisualizer" name="wautomaton" native="true"/>
     </item>
@@ -271,7 +111,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>694</width>
+     <width>656</width>
      <height>38</height>
     </rect>
    </property>
@@ -300,8 +140,16 @@
     <addaction name="actionBack"/>
     <addaction name="actionForward"/>
    </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionAutomatonSettings"/>
+    <addaction name="actionStateEditor"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
+   <addaction name="menu_View"/>
    <addaction name="menuMedia"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -337,6 +185,162 @@
    <addaction name="actionReset"/>
    <addaction name="actionRandomizeGrid"/>
    <addaction name="actionClear"/>
+  </widget>
+  <widget class="QDockWidget" name="dockEditor">
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="windowTitle">
+    <string>State Editor</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_2"/>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockSettings">
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::BottomDockWidgetArea|Qt::TopDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Automaton Settings</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>4</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_4">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>x</string>
+       </property>
+       <property name="buddy">
+        <cstring>spWidth</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="spLength">
+       <property name="suffix">
+        <string> (length)</string>
+       </property>
+       <property name="maximum">
+        <number>40</number>
+       </property>
+       <property name="value">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="3">
+      <widget class="QSpinBox" name="spWidth">
+       <property name="suffix">
+        <string> (width)</string>
+       </property>
+       <property name="maximum">
+        <number>40</number>
+       </property>
+       <property name="value">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Grid size:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spLength</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QPushButton" name="btnValidateSettings">
+       <property name="toolTip">
+        <string>Validate settings</string>
+       </property>
+       <property name="text">
+        <string>Validate</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/resources.qrc">
+         <normaloff>:/icons/check</normaloff>:/icons/check</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Animation:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spIPS</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" colspan="3">
+      <widget class="QSpinBox" name="spIPS">
+       <property name="suffix">
+        <string> images / second</string>
+       </property>
+       <property name="maximum">
+        <number>60</number>
+       </property>
+       <property name="value">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <widget class="QSpinBox" name="spNbSteps">
+       <property name="toolTip">
+        <string>Numbers of steps to run. If -1, will run until stopped.</string>
+       </property>
+       <property name="suffix">
+        <string> steps</string>
+       </property>
+       <property name="minimum">
+        <number>-1</number>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+       <property name="value">
+        <number>-1</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -470,6 +474,36 @@
     <string>Right</string>
    </property>
   </action>
+  <action name="actionStateEditor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/icons/edit</normaloff>:/icons/edit</iconset>
+   </property>
+   <property name="text">
+    <string>State Editor</string>
+   </property>
+   <property name="toolTip">
+    <string>Show / Hide the State Editor</string>
+   </property>
+  </action>
+  <action name="actionAutomatonSettings">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/resources.qrc">
+     <normaloff>:/icons/settings</normaloff>:/icons/settings</iconset>
+   </property>
+   <property name="text">
+    <string>Automaton Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Show / Hide the Automaton Settings</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -489,11 +523,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>settingsBox</tabstop>
-  <tabstop>spLength</tabstop>
-  <tabstop>spWidth</tabstop>
-  <tabstop>btnValidateSettings</tabstop>
-  <tabstop>spIPS</tabstop>
   <tabstop>btnPlay</tabstop>
   <tabstop>btnBack</tabstop>
   <tabstop>btnForward</tabstop>
@@ -579,54 +608,6 @@
     <hint type="destinationlabel">
      <x>299</x>
      <y>217</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>settingsBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>settingsWidget</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>19</x>
-     <y>143</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>43</x>
-     <y>190</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>wautomaton</sender>
-   <signal>started()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>_automaton_started()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>294</x>
-     <y>282</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>263</x>
-     <y>429</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>wautomaton</sender>
-   <signal>step_calculated()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>_automaton_step_calculated()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>514</x>
-     <y>282</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>514</x>
-     <y>429</y>
     </hint>
    </hints>
   </connection>
@@ -727,18 +708,34 @@
    </hints>
   </connection>
   <connection>
-   <sender>wautomaton</sender>
-   <signal>grid_changed()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>_automaton_grid_changed()</slot>
+   <sender>actionStateEditor</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dockEditor</receiver>
+   <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>252</x>
-     <y>279</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>236</x>
-     <y>310</y>
+     <x>45</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dockEditor</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>actionStateEditor</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>45</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
     </hint>
    </hints>
   </connection>
@@ -755,6 +752,86 @@
     <hint type="destinationlabel">
      <x>329</x>
      <y>313</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>wautomaton</sender>
+   <signal>started()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>_automaton_started()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>294</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>263</x>
+     <y>429</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>wautomaton</sender>
+   <signal>step_calculated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>_automaton_step_calculated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>514</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>514</x>
+     <y>429</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>wautomaton</sender>
+   <signal>grid_changed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>_automaton_grid_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>279</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>236</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAutomatonSettings</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dockSettings</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>327</x>
+     <y>180</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dockSettings</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>actionAutomatonSettings</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>327</x>
+     <y>180</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
     </hint>
    </hints>
   </connection>

@@ -197,7 +197,8 @@ class MainWindow(QMainWindow):
         self.actionRandomizeGrid.setEnabled(enabled)
         self.actionClear.setEnabled(enabled)
         # settings
-        self.settingsWidget.setEnabled(enabled)
+        self.dockSettings.setEnabled(enabled)
+        self.dockEditor.setEnabled(enabled)
         # media buttons
         self.actionForward.setEnabled(enabled)
         self.actionBack.setEnabled(self._history.current_index > 0 if enabled else False)
