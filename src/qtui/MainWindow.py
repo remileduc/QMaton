@@ -38,6 +38,7 @@ class MainWindow(QMainWindow):
     def __init__(self, automaton_type, parent=None):
         super().__init__(parent)
         loadUi(path.join(path.dirname(__file__), "MainWindow.ui"), self)
+        self.stateEditor.set_visualizer(self.wautomaton)
         self._history = AutomatonHistory()
         self._automaton = None
         self._automaton_type = automaton_type

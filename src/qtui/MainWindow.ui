@@ -188,13 +188,16 @@
    <property name="features">
     <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
    </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
    <property name="windowTitle">
     <string>State Editor</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
+   <widget class="StateEditor" name="stateEditor">
     <layout class="QVBoxLayout" name="verticalLayout_2"/>
    </widget>
   </widget>
@@ -488,6 +491,12 @@
     <slot>run()</slot>
     <slot>stop()</slot>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>StateEditor</class>
+   <extends>QWidget</extends>
+   <header>qtui/StateEditor.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

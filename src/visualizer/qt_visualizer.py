@@ -23,7 +23,7 @@
 from PyQt5.QtCore import QObject, QPoint, Qt, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import QGridLayout, QLabel, QMenu, QWidget
-from qmaton import Automaton, AutomatonRunner
+from qmaton import Automaton, AutomatonRunner, State
 
 
 class QtVisualizerWorker(QObject):
@@ -79,7 +79,7 @@ class QtVisualizer(QWidget):
         """
         self.__start()
         self._automaton = automaton
-        self.__clearLayout()
+        self.__clear_layout()
 
         label = None
         for line in range(self._automaton.length):
@@ -97,6 +97,11 @@ class QtVisualizer(QWidget):
     def is_running(self) -> bool:
         """Tells if we are currently running the automaton."""
         return self.__is_running
+
+    def set_cell_state(self, pos: QPoint, state: State) -> None:
+        self._automaton.grid[pos.x()][pos.y()] = state
+        self.__change_label_color(pos.x(), pos.y(), state.color)
+        self.grid_changed.emit()
 
     # Slots
 
@@ -150,11 +155,10 @@ class QtVisualizer(QWidget):
 
     # Private methods
 
-    def __clearLayout(self) -> None:
+    def __clear_layout(self) -> None:
         while self.__layout.count():
-            item = self.__layout.takeAt(0)
-            widget = item.widget()
-            if widget is not None:
+            widget = self.__layout.takeAt(0).widget()
+            if widget:
                 widget.setParent(None)
                 widget.deleteLater()
 
@@ -184,7 +188,7 @@ class QtVisualizer(QWidget):
         state = None
         oldState = self._automaton.grid[x][y]
 
-        def __set_state(newState):
+        def __set_state(newState: State) -> None:
             nonlocal state
             state = newState
 
@@ -203,9 +207,7 @@ class QtVisualizer(QWidget):
         menu.exec(pos)
         # change state if a new one has been selected
         if state is not None and state != oldState:
-            self._automaton.grid[x][y] = state
-            self.__change_label_color(x, y, state.color)
-            self.grid_changed.emit()
+            self.set_cell_state(QPoint(x, y), state)
 
     def __change_label_color(self, x: int, y: int, color: str):
         self.__layout.itemAtPosition(x, y).widget().setStyleSheet(f"QLabel {{ background-color : {color} }}")
