@@ -140,16 +140,14 @@
     <addaction name="actionBack"/>
     <addaction name="actionForward"/>
    </widget>
-   <widget class="QMenu" name="menu_View">
+   <widget class="QMenu" name="menuView">
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <addaction name="actionAutomatonSettings"/>
-    <addaction name="actionStateEditor"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
-   <addaction name="menu_View"/>
+   <addaction name="menuView"/>
    <addaction name="menuMedia"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -474,36 +472,6 @@
     <string>Right</string>
    </property>
   </action>
-  <action name="actionStateEditor">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="resources/resources.qrc">
-     <normaloff>:/icons/edit</normaloff>:/icons/edit</iconset>
-   </property>
-   <property name="text">
-    <string>State Editor</string>
-   </property>
-   <property name="toolTip">
-    <string>Show / Hide the State Editor</string>
-   </property>
-  </action>
-  <action name="actionAutomatonSettings">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="resources/resources.qrc">
-     <normaloff>:/icons/settings</normaloff>:/icons/settings</iconset>
-   </property>
-   <property name="text">
-    <string>Automaton Settings</string>
-   </property>
-   <property name="toolTip">
-    <string>Show / Hide the Automaton Settings</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -708,38 +676,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionStateEditor</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dockEditor</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>45</x>
-     <y>257</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dockEditor</sender>
-   <signal>visibilityChanged(bool)</signal>
-   <receiver>actionStateEditor</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>45</x>
-     <y>257</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>wautomaton</sender>
    <signal>finished()</signal>
    <receiver>MainWindow</receiver>
@@ -800,38 +736,6 @@
     <hint type="destinationlabel">
      <x>236</x>
      <y>310</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionAutomatonSettings</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dockSettings</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>327</x>
-     <y>180</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dockSettings</sender>
-   <signal>visibilityChanged(bool)</signal>
-   <receiver>actionAutomatonSettings</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>327</x>
-     <y>180</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
     </hint>
    </hints>
   </connection>
