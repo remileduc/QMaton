@@ -8,6 +8,9 @@
     <file alias="open">document-open.svg</file>
   </qresource>
   <qresource prefix="icons">
+    <file alias="settings">configure.svg</file>
+    <file alias="cancel">dialog-cancel.svg</file>
+    <file alias="edit">document-edit.svg</file>
     <file alias="check">dialog-ok-apply.svg</file>
   </qresource>
   <qresource prefix="media">

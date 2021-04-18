@@ -23,7 +23,7 @@
 from PyQt5.QtCore import QObject, QPoint, Qt, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import QGridLayout, QLabel, QMenu, QWidget
-from qmaton import Automaton, AutomatonRunner
+from qmaton import Automaton, AutomatonRunner, State
 
 
 class QtVisualizerWorker(QObject):
@@ -49,9 +49,17 @@ class QtVisualizer(QWidget):
     """Show the automaton in a UI window."""
 
     started = pyqtSignal()
+    """Emitted when we start running the automaton, or when we change the automaton."""
     finished = pyqtSignal()
+    """Emitted when the running or the change of automaton is finished."""
     step_calculated = pyqtSignal(Automaton)
+    """Emitted during automaton running, at each step."""
     grid_changed = pyqtSignal()
+    """Emitted when th grid is editted."""
+    automaton_has_changed = pyqtSignal(Automaton)
+    """Emitted when the automaton has changed (possible change of states)."""
+    cell_clicked = pyqtSignal(QPoint)
+    """Emitted when a cell has been clicked."""
 
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
@@ -61,6 +69,7 @@ class QtVisualizer(QWidget):
         self.__automaton_runner: AutomatonRunner = None
         self.__layout: QGridLayout = QGridLayout(self)
         self.__layout.setSpacing(1)
+        self.__is_running: bool = False
 
     def set_automaton(self, automaton: Automaton) -> None:
         """Reset the widget to show the given automaton.
@@ -68,9 +77,9 @@ class QtVisualizer(QWidget):
         In case the automaton is the same but you just want to update the widget, you should call the draw()
         method instead.
         """
-        self.started.emit()
+        self.__start()
         self._automaton = automaton
-        self.__clearLayout()
+        self.__clear_layout()
 
         label = None
         for line in range(self._automaton.length):
@@ -82,7 +91,17 @@ class QtVisualizer(QWidget):
                 )
                 self.__layout.addWidget(label, line, cell)
         self.draw()
-        self.finished.emit()
+        self.__stop()
+        self.automaton_has_changed.emit(self._automaton)
+
+    def is_running(self) -> bool:
+        """Tells if we are currently running the automaton."""
+        return self.__is_running
+
+    def set_cell_state(self, pos: QPoint, state: State) -> None:
+        self._automaton.grid[pos.x()][pos.y()] = state
+        self.__change_label_color(pos.x(), pos.y(), state.color)
+        self.grid_changed.emit()
 
     # Slots
 
@@ -119,13 +138,27 @@ class QtVisualizer(QWidget):
         if self._thread and self._thread.isRunning():
             self._thread.exit(-1)
 
+    # Override
+
+    def mouseReleaseEvent(self, event):
+        if self.is_running():
+            return
+        w = self.childAt(event.pos())
+        if not w or not isinstance(w, QLabel):
+            return
+        # try to find the position of the label
+        for i in range(self.__layout.count()):
+            if self.__layout.itemAt(i).widget() is w:
+                (x, y, _, _) = self.__layout.getItemPosition(i)
+                self.cell_clicked.emit(QPoint(x, y))
+                return
+
     # Private methods
 
-    def __clearLayout(self) -> None:
+    def __clear_layout(self) -> None:
         while self.__layout.count():
-            item = self.__layout.takeAt(0)
-            widget = item.widget()
-            if widget is not None:
+            widget = self.__layout.takeAt(0).widget()
+            if widget:
                 widget.setParent(None)
                 widget.deleteLater()
 
@@ -134,8 +167,8 @@ class QtVisualizer(QWidget):
         # Create thread environment
         self._worker = QtVisualizerWorker(self._automaton, automatonRunner)
         # Connect everything
-        self._worker.started.connect(self.started)
-        self._worker.finished.connect(self.finished)
+        self._worker.started.connect(self.__start)
+        self._worker.finished.connect(self.__stop)
         self._worker.step_calculated.connect(self.step_calculated)
         self._worker.finished.connect(self._worker.deleteLater)
         self._worker.step_calculated.connect(self.draw)
@@ -155,7 +188,7 @@ class QtVisualizer(QWidget):
         state = None
         oldState = self._automaton.grid[x][y]
 
-        def __set_state(newState):
+        def __set_state(newState: State) -> None:
             nonlocal state
             state = newState
 
@@ -174,9 +207,19 @@ class QtVisualizer(QWidget):
         menu.exec(pos)
         # change state if a new one has been selected
         if state is not None and state != oldState:
-            self._automaton.grid[x][y] = state
-            self.__change_label_color(x, y, state.color)
-            self.grid_changed.emit()
+            self.set_cell_state(QPoint(x, y), state)
 
     def __change_label_color(self, x: int, y: int, color: str):
         self.__layout.itemAtPosition(x, y).widget().setStyleSheet(f"QLabel {{ background-color : {color} }}")
+
+    # Private slots
+
+    @pyqtSlot()
+    def __start(self):
+        self.__is_running = True
+        self.started.emit()
+
+    @pyqtSlot()
+    def __stop(self):
+        self.__is_running = False
+        self.finished.emit()

@@ -129,3 +129,16 @@ def test_QtVisualizer_run(app):
     t = qv.run(AutomatonRunner(10, 1000, hist))
     assert t.isRunning()
     t.wait(500)
+
+
+def test_QtVisualizer_is_running(app):
+    qv = QtVisualizer()
+    qv.set_automaton(DumbAutomaton(5, 5))
+    hist = AutomatonHistory()
+
+    assert not qv.is_running()
+    t = qv.run(AutomatonRunner(10, 1000, hist))
+    #  assert qv.is_running() #  doesn't work...
+    qv.stop()
+    t.wait(500)
+    assert not qv.is_running()

@@ -21,9 +21,9 @@
 
 from os import path
 
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFileDialog, QMainWindow
+from PyQt5.QtWidgets import QFileDialog, QLabel, QMainWindow, QProgressBar
 from PyQt5.uic import loadUi
 from qmaton import Automaton, AutomatonHistory, AutomatonRunner
 from qtui import resources, settings  # noqa: F401
@@ -38,15 +38,28 @@ class MainWindow(QMainWindow):
     def __init__(self, automaton_type, parent=None):
         super().__init__(parent)
         loadUi(path.join(path.dirname(__file__), "MainWindow.ui"), self)
+        self.stateEditor.set_visualizer(self.wautomaton)
         self._history = AutomatonHistory()
         self._automaton = None
         self._automaton_type = automaton_type
         self.__is_running = False
+        self.__statusprogress = None
+        self.__lastmax = 0
+        self.__statuslabel = QLabel(self)
+        self.statusbar.addPermanentWidget(self.__statuslabel)
 
         # set media buttons
         self.btnPlay.setDefaultAction(self.actionPlayPause)
         self.btnBack.setDefaultAction(self.actionBack)
         self.btnForward.setDefaultAction(self.actionForward)
+
+        # set dock actions
+        action = self.dockSettings.toggleViewAction()
+        action.setIcon(QIcon(":/icons/settings"))
+        self.menuView.addAction(action)
+        action = self.dockEditor.toggleViewAction()
+        action.setIcon(QIcon(":/icons/edit"))
+        self.menuView.addAction(action)
 
         # restore preferences
         settings.restore_settings(self)
@@ -66,21 +79,27 @@ class MainWindow(QMainWindow):
         self.__is_running = True
         self.__enable_ui(False)
         self.actionPlayPause.setIcon(QIcon(":/media/pause"))
+        self.statusbar.showMessage("Running Automaton...")
 
     @pyqtSlot()
     def _automaton_finished(self):
         self.__is_running = False
         self.__enable_ui(True)
         self.actionPlayPause.setIcon(QIcon(":/media/play"))
+        self.statusbar.clearMessage()
+        if self.__statusprogress:
+            self.statusbar.removeWidget(self.__statusprogress)
+            self.__statusprogress.deleteLater()
+            self.__statusprogress = None
 
     @pyqtSlot(Automaton)
     def _automaton_step_calculated(self, automaton):
-        self.__updateSlider()
+        self.__update_slider()
 
     @pyqtSlot()
     def _automaton_grid_changed(self):
         self.__clear_history()
-        self.__enable_ui(True)
+        self.statusbar.showMessage("Grid has changed", 2500)
 
     # Menu slots
 
@@ -94,6 +113,7 @@ class MainWindow(QMainWindow):
         with open(filename, "r") as file:
             self.set_automaton(self._automaton_type.fromJSON(file.read()))
         settings.save_path = filename
+        self.statusbar.showMessage(f"File open: '{filename}'", 2500)
 
     @pyqtSlot()
     def _save_file(self):
@@ -105,6 +125,7 @@ class MainWindow(QMainWindow):
         with open(filename, "w") as file:
             file.write(self._automaton.toJSON())
         settings.save_path = filename
+        self.statusbar.showMessage(f"Saved to file: '{filename}'", 2500)
 
     @pyqtSlot()
     def _reset_grid(self):
@@ -136,13 +157,15 @@ class MainWindow(QMainWindow):
         else:
             self._automaton_started()
             self.wautomaton.run(AutomatonRunner(self.spNbSteps.value(), self.spIPS.value(), history=self._history))
+            if self.spNbSteps.value() > 0:
+                self.__create_progressbar()
 
     @pyqtSlot()
     def _run_backward(self):
         if self._history.current_index > 0:
             self._automaton_started()
             self._automaton.grid = self._history.move_backward()
-            self.__updateSlider()
+            self.__update_slider()
             self.__draw_automaton()
 
     @pyqtSlot()
@@ -152,14 +175,14 @@ class MainWindow(QMainWindow):
             self.wautomaton.run_seq(AutomatonRunner(1, history=self._history))
         else:
             self._automaton.grid = self._history.move_forward()
-            self.__updateSlider()
+            self.__update_slider()
             self.__draw_automaton()
 
     @pyqtSlot(int)
     def _set_step(self, step):
         self._automaton_started()
         self._automaton.grid = self._history.move_to(step)
-        self.__updateSlider()
+        self.__update_slider()
         self.__draw_automaton()
 
     # Settings slots
@@ -186,7 +209,7 @@ class MainWindow(QMainWindow):
 
     def __clear_history(self):
         self._history.clear()
-        self.__updateSlider()
+        self.__update_slider()
 
     def __enable_ui(self, enabled):
         # actions file
@@ -197,18 +220,31 @@ class MainWindow(QMainWindow):
         self.actionRandomizeGrid.setEnabled(enabled)
         self.actionClear.setEnabled(enabled)
         # settings
-        self.settingsWidget.setEnabled(enabled)
+        self.dockSettings.setEnabled(enabled)
+        self.dockEditor.setEnabled(enabled)
         # media buttons
         self.actionForward.setEnabled(enabled)
         self.actionBack.setEnabled(self._history.current_index > 0 if enabled else False)
         self.timeSlider.setEnabled(enabled)
 
-    def __updateSlider(self):
+    def __update_slider(self):
         timemax = max(0, len(self._history) - 1)
-        tumecur = max(0, self._history.current_index)
+        timecur = max(0, self._history.current_index)
 
         self.timeSlider.blockSignals(True)
         self.timeSlider.setMaximum(timemax)
-        self.timeSlider.setValue(tumecur)
+        self.timeSlider.setValue(timecur)
         self.timeSlider.blockSignals(False)
-        self.lblTime.setText(f"({tumecur} / {timemax}) ")
+        self.lblTime.setText(f"({timecur} / {timemax}) ")
+        self.__statuslabel.setText(f"Step {timecur} over {timemax}")
+        if self.__statusprogress:
+            self.__statusprogress.setValue(timecur - self.__lastmax)
+
+    def __create_progressbar(self):
+        self.__statusprogress = QProgressBar(self)
+        self.__statusprogress.setAlignment(Qt.AlignHCenter)
+        self.__statusprogress.setMaximum(self.spNbSteps.value())
+        self.__statusprogress.setValue(0)
+        self.__statusprogress.setFormat("%v / %m")
+        self.__lastmax = max(0, self._history.current_index)
+        self.statusbar.insertPermanentWidget(0, self.__statusprogress)

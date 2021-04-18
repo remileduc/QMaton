@@ -22,3 +22,4 @@
 
 
 from .MainWindow import MainWindow
+from .StateEditor import StateEditor
